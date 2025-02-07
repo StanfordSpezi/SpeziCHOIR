@@ -22,42 +22,26 @@ jobs:
     name: Build and Test Swift Package iOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
-      scheme: TemplatePackage
-      resultBundle: TemplatePackage-iOS.xcresult
-      artifactname: TemplatePackage-iOS.xcresult
-  packagewatchos:
-    name: Build and Test Swift Package watchOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      scheme: TemplatePackage
-      destination: 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)'
-      resultBundle: TemplatePackage-watchOS.xcresult
-      artifactname: TemplatePackage-watchOS.xcresult
+      scheme: SpeziCHOIR-Package
+      resultBundle: SpeziCHOIR-Package-iOS.xcresult
+      artifactname: SpeziCHOIR-Package-iOS.xcresult
   packagevisionos:
     name: Build and Test Swift Package visionOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
-      scheme: TemplatePackage
+      scheme: SpeziCHOIR-Package
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-      resultBundle: TemplatePackage-visionOS.xcresult
-      artifactname: TemplatePackage-visionOS.xcresult
-  packagetvos:
-    name: Build and Test Swift Package tvOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      scheme: TemplatePackage
-      resultBundle: TemplatePackage-tvOS.xcresult
-      destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)'
-      artifactname: TemplatePackage-tvOS.xcresult
+      resultBundle: SpeziCHOIR-Package-visionOS.xcresult
+      artifactname: SpeziCHOIR-Package-visionOS.xcresult
   packagemacos:
     name: Build and Test Swift Package macOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
-      scheme: TemplatePackage
-      resultBundle: TemplatePackage-macOS.xcresult
+      scheme: SpeziCHOIR-Package
+      resultBundle: SpeziCHOIR-Package-macOS.xcresult
       destination: 'platform=macOS,arch=arm64'
-      artifactname: TemplatePackage-macOS.xcresult
+      artifactname: SpeziCHOIR-Package-macOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -75,16 +59,6 @@ jobs:
       destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M2)'
       resultBundle: TestApp-iPadOS.xcresult
       artifactname: TestApp-iPadOS.xcresult
-  watchos:
-    name: Build and Test watchOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      path: 'Tests/UITests'
-      scheme: TestAppWatchApp
-      destination: 'platform=watchOS Simulator,name=Apple Watch Series 10 (46mm)'
-      resultBundle: TestApp-watchOS.xcresult
-      artifactname: TestApp-watchOS.xcresult
   visionos:
     name: Build and Test visionOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -95,18 +69,10 @@ jobs:
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       resultBundle: TestApp-visionOS.xcresult
       artifactname: TestApp-visionOS.xcresult
-  tvos:
-    name: Build and Test tvOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      path: 'Tests/UITests'
-      scheme: TestApp
-      destination: 'platform=tvOS Simulator,name=Apple TV 4K (3rd generation)'
-      resultBundle: TestApp-tvOS.xcresult
-      artifactname: TestApp-tvOS.xcresult
+ 
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [packageios, packagewatchos, packagevisionos, packagetvos, packagemacos, ios, ipados, watchos, visionos, tvos]
+    needs: [packageios, packagevisionos, packagemacos, ios, ipados, visionos]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
       coveragereports: TemplatePackage-iOS.xcresult TemplatePackage-watchOS.xcresult TemplatePackage-visionOS.xcresult TemplatePackage-tvOS.xcresult TemplatePackage-macOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult TestApp-watchOS.xcresult TestApp-visionOS.xcresult TestApp-tvOS.xcresult

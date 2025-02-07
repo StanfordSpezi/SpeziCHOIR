@@ -1,5 +1,5 @@
 //
-// This source file is part of the TemplatePackage open-source project
+// This source file is part of the Stanford Spezi open source project
 //
 // SPDX-FileCopyrightText: 2022 Stanford University and the project authors (see CONTRIBUTORS.md)
 //
@@ -7,14 +7,15 @@
 //
 
 import SwiftUI
-import TemplatePackage
+import SpeziCHOIR
+import SpeziCHOIRViews
 
 
 @main
 struct UITestsApp: App {
     var body: some Scene {
         WindowGroup {
-            Text(TemplatePackage().stanford)
+//            todo: add CHOIRViews FormField
             Text(operatingSystem)
         }
     }
