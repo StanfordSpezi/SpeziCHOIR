@@ -6,9 +6,9 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SwiftUI
 import SpeziCHOIR
 import SpeziCHOIRViews
+import SwiftUI
 
 
 @main
