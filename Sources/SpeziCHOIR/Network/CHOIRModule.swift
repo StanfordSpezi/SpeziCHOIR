@@ -15,34 +15,6 @@ import SpeziAccount
 
 // swiftlint:disable missing_docs
 
-/// todo docs
-public enum CHOIRError: Error {
-    case internalServerError(message: String)
-    case badRequest(message: String)
-    case unauthorized(message: String)
-    case notFound(message: String)
-    case unknown
-}
-
-extension CHOIRError {
-    /// todo docs
-    public func mapErrorToMessage() -> String {
-        return switch self {
-        case CHOIRError.internalServerError:
-            "The server was unable to process the request."
-        case CHOIRError.notFound:
-            "The survey was not found."
-        case CHOIRError.unauthorized:
-            "Not allowed to request the resource. This can be caused by an unverified email."
-        case CHOIRError.badRequest:
-            "The server was unable to process the request."
-        case CHOIRError.unknown:
-            "An unknown error occurred."
-        default:
-            "An unknown error occurred."
-        }
-    }
-}
 
 /// todo docs
 public protocol CHOIRModuleProtocol: Module, EnvironmentAccessible {
@@ -117,7 +89,6 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     
     internal let client: Client
     
-    /// todo docs
     // periphery:ignore - false positive
     public init(environment: CHOIREnvironment) {
         switch environment {

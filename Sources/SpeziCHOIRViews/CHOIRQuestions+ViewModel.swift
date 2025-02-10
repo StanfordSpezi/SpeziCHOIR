@@ -77,9 +77,13 @@ extension CHOIRQuestions {
                 }
                 handleAssessmentStepChange(assessmentStep)
                 loading = false
+            } catch let error as CHOIRError {
+                errorMessage = error.description()
+                showHandlingOnboardingAlert = true
+                continueButtonEnabled = false
+                loading = false
             } catch {
-                let choirError = error as! CHOIRError
-                errorMessage = choirError.mapErrorToMessage()
+                errorMessage = "An unknown error occurred."
                 showHandlingOnboardingAlert = true
                 continueButtonEnabled = false
                 loading = false
@@ -126,10 +130,14 @@ extension CHOIRQuestions {
                 handleAssessmentStepChange(assessmentStep)
                 managedFormResult = ResearchFormResult()
                 loading = false
-            } catch {
-                let choirError = error as! CHOIRError
-                errorMessage = choirError.mapErrorToMessage()
+            } catch let error as CHOIRError {
+                errorMessage = error.description()
                 showAssessmentContinueAlert = true
+                continueButtonEnabled = false
+                loading = false
+            } catch {
+                errorMessage = "An unknown error occurred."
+                showHandlingOnboardingAlert = true
                 continueButtonEnabled = false
                 loading = false
             }

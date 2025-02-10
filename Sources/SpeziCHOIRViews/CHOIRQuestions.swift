@@ -23,7 +23,13 @@ public struct CHOIRQuestions: View {
     
     @State private var viewModel = ViewModel()
     var surveySite: String
-    var onFinish : () -> ()
+    var onFinish: () -> Void
+    
+    public init(onFinish: @escaping () -> Void, surveySite: String) {
+        self.onFinish = onFinish
+        self.surveySite = surveySite
+    }
+    
     
     public var body: some View {
         VStack(spacing: 0) {
@@ -71,11 +77,6 @@ public struct CHOIRQuestions: View {
             .navigationBarBackButtonHidden()
     }
     
-    
-    public init(onFinish: @escaping () -> Void, surveySite: String) {
-        self.onFinish = onFinish
-        self.surveySite = surveySite
-    }
     
     private var navigationTitleView: some View {
         VStack {
