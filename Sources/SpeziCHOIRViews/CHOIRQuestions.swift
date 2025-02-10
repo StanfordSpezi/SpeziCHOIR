@@ -24,11 +24,6 @@ public struct CHOIRQuestions: View {
     var surveySite: String
     var onFinish: () -> Void
     
-    public init(onFinish: @escaping () -> Void, surveySite: String) {
-        self.onFinish = onFinish
-        self.surveySite = surveySite
-    }
-    
     @State private var viewModel = ViewModel()
     
     
@@ -131,6 +126,11 @@ public struct CHOIRQuestions: View {
             Spacer()
         }
             .padding(.vertical)
+    }
+    
+    public init(onFinish: @escaping () -> Void, surveySite: String) {
+        self.onFinish = onFinish
+        self.surveySite = surveySite
     }
 }
 
