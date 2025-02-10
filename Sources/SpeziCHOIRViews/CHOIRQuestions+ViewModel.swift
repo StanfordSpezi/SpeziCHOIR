@@ -10,8 +10,6 @@ import OpenAPIRuntime
 import OpenAPIURLSession
 import ResearchKitSwiftUI
 import SpeziCHOIR
-import SpeziOnboarding
-import SpeziViews
 import SwiftUI
 
 

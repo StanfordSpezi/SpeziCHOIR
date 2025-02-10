@@ -11,7 +11,6 @@ import OpenAPIURLSession
 import ResearchKitSwiftUI
 import SpeziCHOIR
 import SpeziFoundation
-import SpeziOnboarding
 import SpeziViews
 import SwiftUI
 
