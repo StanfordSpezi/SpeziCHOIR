@@ -12,6 +12,7 @@ SPDX-License-Identifier: MIT
 
 [![Build and Test](https://github.com/StanfordSpezi/SpeziCHOIR/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/StanfordSpezi/SpeziCHOIR/actions/workflows/build-and-test.yml)
 
+SpeziCHOIR and SpeziCHOIRViews provide the necessary building blocks for interacting with the CHOIR API and rendering its survey questions.
 
 ## Installation
 

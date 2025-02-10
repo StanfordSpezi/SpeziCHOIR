@@ -10,14 +10,30 @@ SPDX-License-Identifier: MIT
        
 -->
 
-The template repository contains a template Swift Package, including a continuous integration setup.
+SpeziCHOIR contains the necessary CHOIR type generation, account configuration and networking middleware for interacting with the CHOIR API.
 
 ## Overview
 
-Please follow the steps in the README.md file to customize the code to your needs.
 
 ## Types
 
-### Template Package
+### Account
 
-- ``TemplatePackage``
+- ``PreferredCommunication``
+
+- ``CHOIRAccountStorageProvider``
+
+- ``TestAccountStorageProvider``
+
+### Network
+
+- ``CHOIRModuleProtocol``
+
+- ``CHOIRModule``
+
+- ``CHOIRMockModule``
+
+- ``CHOIRError``
+
+- ``CHOIREnvironment``
+

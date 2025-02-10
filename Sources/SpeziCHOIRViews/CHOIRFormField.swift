@@ -11,12 +11,12 @@ import SpeziCHOIR
 import SwiftUI
 
 
-public struct CHOIRFormField: View {
+struct CHOIRFormField: View {
     let formField: Components.Schemas.FormField?
     @State private var attributedLabel: AttributedString?
     
     
-    public var body: some View {
+    var body: some View {
         // swiftlint:disable:next closure_body_length
         Group {
             switch formField?._type {
@@ -135,10 +135,5 @@ public struct CHOIRFormField: View {
                     }
                 }
             }
-    }
-    
-    
-    public init(formField: Components.Schemas.FormField?) {
-        self.formField = formField
     }
 }

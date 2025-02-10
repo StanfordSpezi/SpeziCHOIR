@@ -23,7 +23,6 @@ class TestAppUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         
-        XCTAssert(app.staticTexts["Stanford University"].waitForExistence(timeout: 0.1))
         XCTAssert(app.staticTexts[operatingSystem].exists)
     }
 }

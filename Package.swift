@@ -1,5 +1,4 @@
 // swift-tools-version:6.0
-
 //
 // This source file is part of the Stanford Spezi open source project
 // 
@@ -17,8 +16,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [
         .iOS(.v18),
-        .visionOS(.v1),
-        .macOS(.v14)
+        .visionOS(.v2)
     ],
     products: [
         .library(name: "SpeziCHOIR", targets: ["SpeziCHOIR"]),

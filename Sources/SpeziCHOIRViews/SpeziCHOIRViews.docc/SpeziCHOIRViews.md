@@ -10,14 +10,11 @@ SPDX-License-Identifier: MIT
        
 -->
 
-The template repository contains a template Swift Package, including a continuous integration setup.
+SpeziCHOIRViews contains the necessary views to render CHOIR style questions with ResearchKit UI components.
 
 ## Overview
 
-Please follow the steps in the README.md file to customize the code to your needs.
 
 ## Types
 
-### Template Package
-
-- ``TemplatePackage``
+- ``CHOIRQuestions``

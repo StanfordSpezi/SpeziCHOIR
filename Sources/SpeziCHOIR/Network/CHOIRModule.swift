@@ -15,7 +15,7 @@ import SpeziAccount
 
 // swiftlint:disable missing_docs
 
-
+/// todo docs
 public enum CHOIRError: Error {
     case internalServerError(message: String)
     case badRequest(message: String)
@@ -24,6 +24,27 @@ public enum CHOIRError: Error {
     case unknown
 }
 
+extension CHOIRError {
+    /// todo docs
+    public func mapErrorToMessage() -> String {
+        return switch self {
+        case CHOIRError.internalServerError:
+            "The server was unable to process the request."
+        case CHOIRError.notFound:
+            "The survey was not found."
+        case CHOIRError.unauthorized:
+            "Not allowed to request the resource. This can be caused by an unverified email."
+        case CHOIRError.badRequest:
+            "The server was unable to process the request."
+        case CHOIRError.unknown:
+            "An unknown error occurred."
+        default:
+            "An unknown error occurred."
+        }
+    }
+}
+
+/// todo docs
 public protocol CHOIRModuleProtocol: Module, EnvironmentAccessible {
     // periphery:ignore - false positive
     static var valueConfiguration: AccountValueConfiguration { get }
@@ -45,12 +66,15 @@ public enum CHOIREnvironment {
     case demo
 }
 
+/// todo docs
 public final class CHOIRMockModule: CHOIRModuleProtocol {
     // periphery:ignore - false positive
     public static let valueConfiguration: AccountValueConfiguration = CHOIRModule.valueConfiguration
     
+    /// todo docs
     public init() {}
     
+    /// todo docs
     @MainActor
     public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
         // Using existing mock implementation
@@ -60,6 +84,7 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
         return onboardingData
     }
     
+    /// todo docs
     @MainActor
     public func continueAssessmentStep(
         site: String,
@@ -74,6 +99,7 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
     }
 }
 
+/// todo docs
 public final class CHOIRModule: CHOIRModuleProtocol {
     public static let valueConfiguration: AccountValueConfiguration = [
         .requires(\.userId),
@@ -91,6 +117,7 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     
     internal let client: Client
     
+    /// todo docs
     // periphery:ignore - false positive
     public init(environment: CHOIREnvironment) {
         switch environment {
@@ -111,6 +138,7 @@ public final class CHOIRModule: CHOIRModuleProtocol {
         }
     }
     
+    /// todo docs
     @MainActor
     public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
         let onboardingData = try await client.getOnboarding(path: .init(site: site), headers: .init(accept: [.init(contentType: .json)]))
@@ -131,6 +159,7 @@ public final class CHOIRModule: CHOIRModuleProtocol {
         }
     }
     
+    /// todo docs
     @MainActor
     public func continueAssessmentStep(
         site: String,
