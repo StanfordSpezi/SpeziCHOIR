@@ -21,7 +21,6 @@ public struct CHOIRQuestions: View {
     @Environment(\.choirModule) var choir
     @Environment(\.dismiss) var dismiss
     
-    @State private var viewModel = ViewModel()
     var surveySite: String
     var onFinish: () -> Void
     
@@ -29,6 +28,8 @@ public struct CHOIRQuestions: View {
         self.onFinish = onFinish
         self.surveySite = surveySite
     }
+    
+    @State private var viewModel = ViewModel()
     
     
     public var body: some View {
