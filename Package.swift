@@ -24,6 +24,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/StanfordSpezi/SpeziAccount.git", from: "2.1.2"),
+        .package(url: "https://github.com/StanfordSpezi/SpeziViews.git", branch: "main"),
         .package(url: "https://github.com/StanfordSpezi/SpeziFirebase.git", from: "2.0.1"),
         .package(url: "https://github.com/apple/swift-openapi-generator.git", from: "1.6.0"),
         .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.7.0"),
@@ -50,6 +51,7 @@ let package = Package(
             name: "SpeziCHOIRViews",
             dependencies: [
                 .target(name: "SpeziCHOIR"),
+                .product(name: "SpeziViews", package: "SpeziViews"),
                 .product(name: "ResearchKitSwiftUI", package: "ResearchKit"),
                 .product(name: "ResearchKit", package: "ResearchKit")
             ],
