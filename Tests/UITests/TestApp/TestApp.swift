@@ -6,17 +6,18 @@
 // SPDX-License-Identifier: MIT
 //
 
-import SpeziCHOIR
-import SpeziCHOIRViews
+import Spezi
 import SwiftUI
 
 
 @main
 struct UITestsApp: App {
+    @UIApplicationDelegateAdaptor(TestAppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
-//            todo: add CHOIRViews FormField
-            Text(operatingSystem)
+            QuestionView()
+                .spezi(appDelegate)
         }
     }
 }

@@ -6,7 +6,6 @@
 // SPDX-License-Identifier: MIT
 //
 
-import FirebaseAuth
 import Foundation
 import OpenAPIRuntime
 import OpenAPIURLSession
