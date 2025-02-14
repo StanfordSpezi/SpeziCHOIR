@@ -706,8 +706,8 @@ paths:
           description: Internal error
 
   /v1/sites/{site}/participant:
-    put:
-      operationId: putParticipant
+    post:
+      operationId: postParticipant
       tags:
         - Participant Management
       summary: Create or update participant account
@@ -743,7 +743,7 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '500':
           description: Internal error
     get:

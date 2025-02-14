@@ -20,14 +20,7 @@ public actor TestAccountStorageProvider: AccountStorageProvider {
             return entry
         }
         var details = AccountDetails()
-        details.organization = "Stanford University"
-        details.street = "318 Campus Drive"
-        details.city = "Stanford"
-        details.state = "CA"
-        details.country = "USA"
-        details.postalCode = "94305"
         details.phoneNumber = "+1 (555) 555-5555"
-        details.preferredCommunication = .email
         await localCache.communicateRemoteChanges(for: accountId, details)
         return details
     }

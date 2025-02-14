@@ -75,15 +75,7 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     public static let valueConfiguration: AccountValueConfiguration = [
         .requires(\.userId),
         .supports(\.name),
-        .supports(\.dateOfBirth),
-        .supports(\.organization),
-        .supports(\.street),
-        .supports(\.city),
-        .supports(\.state),
-        .supports(\.postalCode),
-        .supports(\.country),
-        .supports(\.phoneNumber),
-        .supports(\.preferredCommunication)
+        .supports(\.phoneNumber)
     ]
     
     internal let client: Client

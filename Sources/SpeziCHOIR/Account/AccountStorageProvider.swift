@@ -44,17 +44,11 @@ public actor CHOIRAccountStorageProvider: AccountStorageProvider {
                 ).ok.body.json
                 var details = AccountDetails()
                 details.name = PersonNameComponents(givenName: user.firstName, familyName: user.lastName)
-                details.dateOfBirth = user.birthDate.flatMap { birthDateString in
-                    let formatter = ISO8601DateFormatter()
-                    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-                    return formatter.date(from: birthDateString)
-                }
                 details.email = user.email
                 if let phone = user.mobilePhone ?? user.homePhone {
                     details.phoneNumber = phone
                 }
-                details.preferredCommunication = user.contactPreference.map(PreferredCommunication.init(internalType:))
-                
+            
                 try Task.checkCancellation()
                 await localCache.communicateRemoteChanges(for: accountId, details)
                 
@@ -82,26 +76,16 @@ public actor CHOIRAccountStorageProvider: AccountStorageProvider {
         let user = Components.Schemas.Participant(
             firstName: details.name?.givenName ?? "",
             lastName: details.name?.familyName ?? "",
-            birthDate: {
-                let formatter = ISO8601DateFormatter()
-                formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-                return details.dateOfBirth.map(formatter.string) ?? ""
-            }(),
             email: details.email ?? "",
-            mobilePhone: details.phoneNumber ?? "",
-            contactPreference: details.preferredCommunication?.internalType,
-            created: nil
+            mobilePhone: details.phoneNumber ?? ""
         )
         
-        _ = try await choir.client.putParticipant(
+        _ = try await choir.client.postParticipant(
             path: .init(site: siteId),
             body: .json(user)
         ).ok
         
-        try await localCache.communicateModifications(
-            for: accountId,
-            AccountModifications(modifiedDetails: details)
-        )
+        externalStorage.notifyAboutUpdatedDetails(for: accountId, details)
     }
 
     public func store(_ accountId: String, _ modifications: AccountModifications) async throws {
