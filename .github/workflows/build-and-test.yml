@@ -67,7 +67,7 @@ jobs:
  
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [packageios, packagevisionos, packagemacos, ios, ipados, visionos]
+    needs: [packageios, packagevisionos, ios, ipados, visionos]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
       coveragereports: TemplatePackage-iOS.xcresult TemplatePackage-watchOS.xcresult TemplatePackage-visionOS.xcresult TemplatePackage-tvOS.xcresult TemplatePackage-macOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult TestApp-watchOS.xcresult TestApp-visionOS.xcresult TestApp-tvOS.xcresult
