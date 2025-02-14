@@ -20,7 +20,7 @@ jobs:
     uses: StanfordBDHG/.github/.github/workflows/swiftlint.yml@v2
   packageios:
     name: Build and Test Swift Package iOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziCHOIR-Package
@@ -28,7 +28,7 @@ jobs:
       artifactname: SpeziCHOIR-Package-iOS.xcresult
   packagevisionos:
     name: Build and Test Swift Package visionOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziCHOIR-Package
@@ -37,7 +37,7 @@ jobs:
       artifactname: SpeziCHOIR-Package-visionOS.xcresult
   ios:
     name: Build and Test iOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
@@ -46,7 +46,7 @@ jobs:
       artifactname: TestApp-iOS.xcresult
   ipados:
     name: Build and Test iPadOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
@@ -56,7 +56,7 @@ jobs:
       artifactname: TestApp-iPadOS.xcresult
   visionos:
     name: Build and Test visionOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
