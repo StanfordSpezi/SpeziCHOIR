@@ -25,7 +25,7 @@ class TestAppUITests: XCTestCase {
         
         XCTAssert(app.staticTexts["Welcome to Stanford Heartbeat Study!"].waitForExistence(timeout: 1))
         
-        let continueButton = app.buttons["Continue"]    
+        let continueButton = app.buttons["Continue"]
         XCTAssert(continueButton.exists)
         continueButton.tap()
         
@@ -34,6 +34,5 @@ class TestAppUITests: XCTestCase {
         let finishButton = app.buttons["Finish"]
         XCTAssert(finishButton.exists)
         finishButton.tap()
-        
     }
 }
