@@ -8,7 +8,8 @@
 
 
 extension CHOIRError {
-    /// todo docs
+    /// Returns a human-readable description of the CHOIR error.
+    /// - Returns: A string describing the error.
     public func description() -> String {
         switch self {
         case CHOIRError.internalServerError:

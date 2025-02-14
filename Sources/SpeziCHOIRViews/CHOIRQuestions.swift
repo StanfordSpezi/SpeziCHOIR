@@ -15,7 +15,14 @@ import SpeziViews
 import SwiftUI
 
 
-/// todo docs
+/// A SwiftUI view that displays CHOIR survey questions and handles user responses.
+/// 
+/// The `CHOIRQuestions` view manages the display and submission of CHOIR survey questions, including:
+/// - Progress tracking through the survey
+/// - Question rendering based on type (form, radio buttons, etc.)
+/// - Navigation between questions
+/// - Error handling and retry logic
+/// - Survey completion
 public struct CHOIRQuestions: View {
     @Environment(\.choirModule) var choir
     @Environment(\.dismiss) var dismiss

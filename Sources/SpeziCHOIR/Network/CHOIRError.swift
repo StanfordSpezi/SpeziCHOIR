@@ -6,7 +6,7 @@
 // SPDX-License-Identifier: MIT
 //
 
-/// todo docs
+/// Represents errors that can occur when interacting with the CHOIR API.
 public enum CHOIRError: Error {
     case internalServerError(message: String)
     case badRequest(message: String)

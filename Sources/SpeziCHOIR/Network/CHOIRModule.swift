@@ -15,7 +15,10 @@ import SpeziAccount
 // swiftlint:disable missing_docs
 
 
-/// todo docs
+/// A protocol that defines the interface for interacting with the CHOIR API.
+/// 
+/// This protocol defines the core methods needed to interact with the API, including
+/// onboarding and continuing assessment steps.
 public protocol CHOIRModuleProtocol: Module, EnvironmentAccessible {
     // periphery:ignore - false positive
     static var valueConfiguration: AccountValueConfiguration { get }
@@ -37,15 +40,20 @@ public enum CHOIREnvironment {
     case demo
 }
 
-/// todo docs
+/// A mock implementation of the `CHOIRModuleProtocol` that provides simulated responses for testing purposes.
+/// 
+/// This module returns predefined mock data with a simulated network latency to help test CHOIR API integrations
+/// without requiring a connection to the actual server.
 public final class CHOIRMockModule: CHOIRModuleProtocol {
     // periphery:ignore - false positive
     public static let valueConfiguration: AccountValueConfiguration = CHOIRModule.valueConfiguration
     
-    /// todo docs
+    /// Initializes a new mock module instance.
     public init() {}
     
-    /// todo docs
+    /// Simulates the onboarding process.
+    /// - Parameter site: The survey site.
+    /// - Returns: A mock onboarding response.
     @MainActor
     public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
         // Using existing mock implementation
@@ -55,7 +63,12 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
         return onboardingData
     }
     
-    /// todo docs
+    /// Simulates the continuation of an assessment step.
+    /// - Parameters:
+    ///   - site: The survey site.
+    ///   - token: The survey token.
+    ///   - body: The body of the assessment step.
+    /// - Returns: A mock assessment step response.
     @MainActor
     public func continueAssessmentStep(
         site: String,
@@ -70,7 +83,7 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
     }
 }
 
-/// todo docs
+/// A module implementation of the `CHOIRModuleProtocol` that provides a real network connection to the CHOIR API.
 public final class CHOIRModule: CHOIRModuleProtocol {
     public static let valueConfiguration: AccountValueConfiguration = [
         .requires(\.userId),
@@ -80,6 +93,8 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     
     internal let client: Client
     
+    /// Initializes a new CHOIR module instance.
+    /// - Parameter environment: The environment to use for the CHOIR module.
     // periphery:ignore - false positive
     public init(environment: CHOIREnvironment) {
         switch environment {
@@ -100,7 +115,9 @@ public final class CHOIRModule: CHOIRModuleProtocol {
         }
     }
     
-    /// todo docs
+    /// Initially loads the assessment step and the survey token for subsequent steps needed in `continueAssessmentStep`.
+    /// - Parameter site: The survey site.
+    /// - Returns: The onboarding response.
     @MainActor
     public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
         let onboardingData = try await client.getOnboarding(path: .init(site: site), headers: .init(accept: [.init(contentType: .json)]))
@@ -121,7 +138,12 @@ public final class CHOIRModule: CHOIRModuleProtocol {
         }
     }
     
-    /// todo docs
+    /// Continues to the next assessment step.
+    /// - Parameters:
+    ///   - site: The survey site.
+    ///   - token: The survey token.
+    ///   - body: The body of the assessment step.
+    /// - Returns: The assessment step response.
     @MainActor
     public func continueAssessmentStep(
         site: String,
