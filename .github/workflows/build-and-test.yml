@@ -22,6 +22,7 @@ jobs:
     name: Build and Test Swift Package iOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
+      runsonlabels: '["macOS", "self-hosted"]'
       scheme: SpeziCHOIR-Package
       resultBundle: SpeziCHOIR-Package-iOS.xcresult
       artifactname: SpeziCHOIR-Package-iOS.xcresult
@@ -34,18 +35,11 @@ jobs:
       destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
       resultBundle: SpeziCHOIR-Package-visionOS.xcresult
       artifactname: SpeziCHOIR-Package-visionOS.xcresult
-  packagemacos:
-    name: Build and Test Swift Package macOS
-    uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      scheme: SpeziCHOIR-Package
-      resultBundle: SpeziCHOIR-Package-macOS.xcresult
-      destination: 'platform=macOS,arch=arm64'
-      artifactname: SpeziCHOIR-Package-macOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
+      runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       resultBundle: TestApp-iOS.xcresult
@@ -54,6 +48,7 @@ jobs:
     name: Build and Test iPadOS
     uses: StanfordBDHG/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
+      runsonlabels: '["macOS", "self-hosted"]'
       path: 'Tests/UITests'
       scheme: TestApp
       destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M2)'
