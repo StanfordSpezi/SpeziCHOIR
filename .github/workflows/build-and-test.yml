@@ -26,15 +26,6 @@ jobs:
       scheme: SpeziCHOIR-Package
       resultBundle: SpeziCHOIR-Package-iOS.xcresult
       artifactname: SpeziCHOIR-Package-iOS.xcresult
-  packagevisionos:
-    name: Build and Test Swift Package visionOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziCHOIR-Package
-      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-      resultBundle: SpeziCHOIR-Package-visionOS.xcresult
-      artifactname: SpeziCHOIR-Package-visionOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
@@ -54,22 +45,11 @@ jobs:
       destination: 'platform=iOS Simulator,name=iPad Air 13-inch (M2)'
       resultBundle: TestApp-iPadOS.xcresult
       artifactname: TestApp-iPadOS.xcresult
-  visionos:
-    name: Build and Test visionOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      path: 'Tests/UITests'
-      scheme: TestApp
-      destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-      resultBundle: TestApp-visionOS.xcresult
-      artifactname: TestApp-visionOS.xcresult
- 
   uploadcoveragereport:
     name: Upload Coverage Report
-    needs: [packageios, packagevisionos, ios, ipados, visionos]
+    needs: [packageios, ios, ipados]
     uses: StanfordBDHG/.github/.github/workflows/create-and-upload-coverage-report.yml@v2
     with:
-      coveragereports: TemplatePackage-iOS.xcresult TemplatePackage-watchOS.xcresult TemplatePackage-visionOS.xcresult TemplatePackage-tvOS.xcresult TemplatePackage-macOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult TestApp-watchOS.xcresult TestApp-visionOS.xcresult TestApp-tvOS.xcresult
+      coveragereports: SpeziCHOIR-Package-iOS.xcresult TestApp-iOS.xcresult TestApp-iPadOS.xcresult
     secrets:
       token: ${{ secrets.CODECOV_TOKEN }}

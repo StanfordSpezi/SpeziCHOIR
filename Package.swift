@@ -15,8 +15,7 @@ let package = Package(
     name: "SpeziCHOIR",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v18),
-        .visionOS(.v2)
+        .iOS(.v18)
     ],
     products: [
         .library(name: "SpeziCHOIR", targets: ["SpeziCHOIR"]),
