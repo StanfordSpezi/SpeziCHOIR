@@ -13,13 +13,11 @@ import SwiftUI
 
 
 struct SkeletonCell: View {
-    @State private var managedFormResult = ResearchFormResult()
     let mockField = Components.Schemas.FormField(fieldId: "mock", _type: .text, label: "Mock question")
     
     
     var body: some View {
         CHOIRFormField(formField: mockField)
-            .environmentObject(managedFormResult)
     }
 }
 

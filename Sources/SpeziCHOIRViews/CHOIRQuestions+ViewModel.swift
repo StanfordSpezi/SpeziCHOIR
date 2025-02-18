@@ -60,37 +60,48 @@ extension CHOIRQuestions {
             }
         }
         
-        func handleOnboarding(choir: CHOIRModuleProtocol, surveySite: String) async {
+        func handleInitialQuestionLoading(choir: CHOIRModuleProtocol, surveySite: String) async {
             do {
                 loading = true
-                let onboardingData = try await onboarding(choir: choir, surveySite: surveySite)
-                if let surveyToken = onboardingData?.displayStatus.surveyToken {
-                    let surveyTokenString = String(surveyToken)
-                    self.surveyToken = surveyTokenString
-                }
-                if let displayStatus = onboardingData?.displayStatus, let question = onboardingData?.question {
-                    let questionPayload = Components.Schemas.AssessmentStep.questionPayload(value1: question)
-                    let assessmentStep = Components.Schemas.AssessmentStep(displayStatus: displayStatus, question: questionPayload)
+    
+                if let surveyToken = UserDefaults.standard.string(forKey: "survey-token") {
+                    let assessmentStepData = try await start(choir: choir, surveySite: surveySite, token: surveyToken)
+                    handleAssessmentStepChange(assessmentStepData)
+                    loading = false
+                } else {
+                    let onboardingData = try await onboarding(choir: choir, surveySite: surveySite)
+                    if let surveyToken = onboardingData.displayStatus.surveyToken {
+                        let surveyTokenString = String(surveyToken)
+                        self.surveyToken = surveyTokenString
+                        UserDefaults.standard.set(surveyTokenString, forKey: "survey-token")
+                    }
+                    
+                    let questionPayload = Components.Schemas.AssessmentStep.questionPayload(value1: onboardingData.question)
+                    let assessmentStep = Components.Schemas.AssessmentStep(displayStatus: onboardingData.displayStatus, question: questionPayload)
                     self.assessmentStep = assessmentStep
+                    
+                    handleAssessmentStepChange(assessmentStep)
+                    loading = false
                 }
-                handleAssessmentStepChange(assessmentStep)
-                loading = false
             } catch let error as CHOIRError {
                 errorMessage = error.description()
                 showHandlingOnboardingAlert = true
-                continueButtonEnabled = false
                 loading = false
             } catch {
                 errorMessage = "An unknown error occurred."
                 showHandlingOnboardingAlert = true
-                continueButtonEnabled = false
                 loading = false
             }
         }
         
-        private func onboarding(choir: CHOIRModuleProtocol, surveySite: String) async throws -> Components.Schemas.Onboarding? {
+        private func onboarding(choir: CHOIRModuleProtocol, surveySite: String) async throws -> Components.Schemas.Onboarding {
             let onboardingData = try await choir.onboarding(site: surveySite)
             return onboardingData
+        }
+        
+        private func start(choir: CHOIRModuleProtocol, surveySite: String, token: String) async throws -> Components.Schemas.AssessmentStep {
+            let assessmentStepData = try await choir.startAssessmentStep(site: surveySite, token: token)
+            return assessmentStepData
         }
         
         func assessmentContinue(
@@ -130,12 +141,10 @@ extension CHOIRQuestions {
             } catch let error as CHOIRError {
                 errorMessage = error.description()
                 showAssessmentContinueAlert = true
-                continueButtonEnabled = false
                 loading = false
             } catch {
                 errorMessage = "An unknown error occurred."
                 showHandlingOnboardingAlert = true
-                continueButtonEnabled = false
                 loading = false
             }
         }

@@ -46,16 +46,16 @@ public struct CHOIRQuestions: View {
                 attributedTitle1: $viewModel.attributedTitle1,
                 attributedTitle2: $viewModel.attributedTitle2
             )
-                .environmentObject(viewModel.managedFormResult)
                 .processingOverlay(isProcessing: viewModel.loading) {
                     skeletonView
                 }
+                .environmentObject(viewModel.managedFormResult)
             continueButtonView
         }
             .padding(.horizontal)
             .background(Color(UIColor.systemGroupedBackground))
             .task {
-                await viewModel.handleOnboarding(choir: choir, surveySite: surveySite)
+                await viewModel.handleInitialQuestionLoading(choir: choir, surveySite: surveySite)
             }
             .alert("Failed to load question. \(viewModel.errorMessage ?? "Unknown error.")", isPresented: $viewModel.showHandlingOnboardingAlert) {
                 Button("OK", role: .cancel) {
@@ -63,7 +63,7 @@ public struct CHOIRQuestions: View {
                 }
                 Button("Try Again") {
                     Task {
-                        await viewModel.handleOnboarding(choir: choir, surveySite: surveySite)
+                        await viewModel.handleInitialQuestionLoading(choir: choir, surveySite: surveySite)
                     }
                 }
             }
@@ -77,6 +77,9 @@ public struct CHOIRQuestions: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .onChange(of: viewModel.managedFormResult) {
+                print("managedFormResult changed: \(viewModel.managedFormResult)")
+            }
     }
     
     
