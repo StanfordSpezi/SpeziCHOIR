@@ -610,9 +610,6 @@ components:
           type: string
         mobilePhone:
           type: string
-        contactPreference:
-          type: string
-          enum: ["Text", "Email"]
         created:
           type: string
           format: date-time
@@ -663,13 +660,13 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '500':
           description: Internal error
 
   /v1/sites/{site}/log:
     post:
-      operationId: putLog
+      operationId: postLog
       tags:
         - Sites
       summary: Log to CHOIR
@@ -701,7 +698,7 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '500':
           description: Internal error
 
@@ -788,10 +785,10 @@ paths:
                       }
                     ]
                   }
-        '401':
-          description: Unauthorized
         '400':
           description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
         '404':
           description: Participant not found.
 
@@ -816,7 +813,7 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '404':
           description: Participant not enrolled.
 
@@ -943,7 +940,7 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '404':
           description: Assessment not found.
         '500':
@@ -1156,7 +1153,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
           content:
             text/plain:
               schema:
@@ -1240,7 +1237,7 @@ paths:
               schema:
                 type: string
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
           content:
             text/plain:
               schema:
@@ -1321,7 +1318,7 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '404':
           description: program not found.
         '500':
@@ -1365,6 +1362,6 @@ paths:
         '400':
           description: Bad request
         '401':
-          description: Unauthorized
+          description: Unauthorized (likely the user email has not been verified)
         '500':
           description: Internal error

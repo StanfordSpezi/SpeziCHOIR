@@ -126,7 +126,6 @@ extension CHOIRQuestions {
                 let response = try await choir.continueAssessmentStep(site: surveySite, token: token, body: body)
                 assessmentStep = response
                 handleAssessmentStepChange(assessmentStep)
-                managedFormResult = ResearchFormResult()
                 loading = false
             } catch let error as CHOIRError {
                 errorMessage = error.description()
