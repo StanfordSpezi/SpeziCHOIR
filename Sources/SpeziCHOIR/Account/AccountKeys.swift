@@ -15,7 +15,6 @@ import SwiftUI
 
 
 extension AccountDetails {
-
     @AccountKey(
         name: "Phone",
         category: .contactDetails,
