@@ -93,9 +93,9 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     
     internal let client: Client
     
+    // periphery:ignore - false positive
     /// Initializes a new CHOIR module instance.
     /// - Parameter environment: The environment to use for the CHOIR module.
-    // periphery:ignore - false positive
     public init(environment: CHOIREnvironment) {
         switch environment {
         case .production:
