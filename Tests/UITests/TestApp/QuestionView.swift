@@ -10,9 +10,16 @@ import SpeziCHOIR
 import SpeziCHOIRViews
 import SwiftUI
 
+
 struct QuestionView: View {
+    @State var openSheet = true
+    
+    
     var body: some View {
-        CHOIRQuestions(onFinish: {}, surveySite: "")
+        Text("Home")
+            .sheet(isPresented: $openSheet) {
+                CHOIRQuestions(onFinish: { openSheet.toggle() }, surveySite: "")
+            }
     }
 }
 

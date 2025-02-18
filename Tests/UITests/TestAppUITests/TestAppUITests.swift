@@ -27,8 +27,14 @@ class TestAppUITests: XCTestCase {
         XCTAssertTrue(continueButton.exists)
         continueButton.tap()
         
+        let choirQuestionButton = app.staticTexts["Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity"]
+        XCTAssertTrue(choirQuestionButton.waitForExistence(timeout: 1))
+        choirQuestionButton.tap()
+        
         let finishButton = app.buttons["Finish"]
-        XCTAssertTrue(finishButton.exists)
+        XCTAssertTrue(finishButton.waitForExistence(timeout: 1))
         finishButton.tap()
+        
+        XCTAssertTrue(app.staticTexts["Home"].exists)
     }
 }
