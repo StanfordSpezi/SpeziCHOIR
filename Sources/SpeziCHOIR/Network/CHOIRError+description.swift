@@ -6,11 +6,13 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Foundation
+
 
 extension CHOIRError {
     /// Returns a human-readable description of the CHOIR error.
     /// - Returns: A string describing the error.
-    public func description() -> String {
+    public func description() -> LocalizedStringResource {
         switch self {
         case CHOIRError.internalServerError:
             "The server was unable to process the request."

@@ -1,0 +1,21 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "An unknown error occurred." : {
+
+    },
+    "Not allowed to request the resource. This can be caused by an unverified email." : {
+
+    },
+    "Phone" : {
+
+    },
+    "The server was unable to process the request." : {
+
+    },
+    "The survey was not found." : {
+
+    }
+  },
+  "version" : "1.0"
+}

@@ -28,7 +28,7 @@ extension CHOIRQuestions {
         var managedFormResult = ResearchFormResult()
         var continueButtonEnabled = false
         var scrollPosition = ScrollPosition(edge: .top)
-        var errorMessage: String?
+        var errorMessage: LocalizedStringResource?
         
         
         func handleAssessmentStepChange(_ newStep: Components.Schemas.AssessmentStep?) {
