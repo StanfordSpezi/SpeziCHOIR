@@ -73,6 +73,8 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
     /// - Returns: A mock assessment step response.
     @MainActor
     public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
+        // Using existing mock implementation
+        // swiftlint:disable:next line_length
         let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(body: Operations.postAssessmentStep.Output.Ok.Body.json(Components.Schemas.AssessmentStep(displayStatus: Components.Schemas.DisplayStatus(compatLevel: Optional("1"), questionId: "Order1", questionType: Components.Schemas.DisplayStatus.questionTypePayload.form, surveyToken: Optional("2000716078"), stepNumber: Optional("2"), progress: nil, surveyProviderId: Optional("1000"), surveySectionId: Optional("1128"), surveySystemName: nil, serverValidationMessage: nil, sessionToken: Optional("1beyi33timd4i1ihajy3qz381mwyqnfxzrm24wcr1sf1618zhlxdk5rmj333eb2f4gnljkuy211phpwlz1pfda7"), sessionStatus: Components.Schemas.DisplayStatus.sessionStatusPayload.question, resumeToken: nil, resumeTimeoutMillis: nil, styleSheetName: Optional("afib-2024-04-29.cache.css"), pageTitle: Optional("Stanford Heartbeat Study"), locale: "en", showBack: Optional(false)), question: Components.Schemas.AssessmentStep.questionPayload(value1: Optional(Components.Schemas.FormQuestion(title1: "<div class=\"intro\">\n<p class=\"blue-text\">Thank you!</p></div>", title2: Optional("I am completing this questionnaire for:"), serverValidationMessage: nil, terminal: true, fields: Optional([Components.Schemas.FormField(fieldId: "1:0:patient_age", _type: Components.Schemas.FormField._typePayload.radios, label: Optional(""), required: Optional(true), min: nil, max: nil, attributes: nil, values: Optional([Components.Schemas.FormFieldValue(id: "1", label: "Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity", fields: nil), Components.Schemas.FormFieldValue(id: "0", label: "Myself. I am younger than 18 years, and I am interested in learning more about a clinical trial opportunity", fields: nil)]))]))))))).body.json
         try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
         return assessmentStepData
@@ -154,11 +156,16 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     }
     
     /// Initially loads the assessment step for subsequent steps needed in `continueAssessmentStep`.
-    /// - Parameter site: The survey site.
+    /// - Parameters:
+    ///   - site: The survey site.
+    ///   - token: The survey token.
     /// - Returns: The onboarding response.
     @MainActor
     public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
-        let assessmentStepData = try await client.getAssessment(path: .init(site: site, surveyToken: token), headers: .init(accept: [.init(contentType: .json)]))
+        let assessmentStepData = try await client.getAssessment(
+            path: .init(site: site, surveyToken: token),
+            headers: .init(accept: [.init(contentType: .json)])
+        )
         switch assessmentStepData {
         case .ok:
             return try assessmentStepData.ok.body.json
