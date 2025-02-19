@@ -15,7 +15,7 @@ extension CHOIRError {
     public var localizedDescription: LocalizedStringResource {
         switch self {
         case CHOIRError.internalServerError:
-            "The server was unable to process the request." 
+            "The server was unable to process the request."
         case CHOIRError.notFound:
             "The survey was not found."
         case CHOIRError.unauthorized:
