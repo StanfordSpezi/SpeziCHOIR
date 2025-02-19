@@ -28,7 +28,7 @@ extension CHOIRQuestions {
         var managedFormResult = ResearchFormResult()
         var continueButtonEnabled = false
         var scrollPosition = ScrollPosition(edge: .top)
-        var errorMessage: LocalizedStringResource?
+        var errorMessage: String?
         
         
         func handleAssessmentStepChange(_ newStep: Components.Schemas.AssessmentStep?) {
@@ -84,7 +84,7 @@ extension CHOIRQuestions {
                     loading = false
                 }
             } catch let error as CHOIRError {
-                errorMessage = error.description()
+                errorMessage = error.localizedDescription
                 showHandlingOnboardingAlert = true
                 loading = false
             } catch {
@@ -139,7 +139,7 @@ extension CHOIRQuestions {
                 handleAssessmentStepChange(assessmentStep)
                 loading = false
             } catch let error as CHOIRError {
-                errorMessage = error.description()
+                errorMessage = error.localizedDescription
                 showAssessmentContinueAlert = true
                 loading = false
             } catch {

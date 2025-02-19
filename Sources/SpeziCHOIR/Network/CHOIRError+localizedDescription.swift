@@ -11,11 +11,11 @@ import Foundation
 
 extension CHOIRError {
     /// Returns a human-readable description of the CHOIR error.
-    /// - Returns: A string describing the error.
-    public func description() -> LocalizedStringResource {
+    /// - Returns: A localized string describing the error.
+    public var localizedDescription: LocalizedStringResource {
         switch self {
         case CHOIRError.internalServerError:
-            "The server was unable to process the request."
+            "The server was unable to process the request." 
         case CHOIRError.notFound:
             "The survey was not found."
         case CHOIRError.unauthorized:

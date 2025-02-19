@@ -6,8 +6,11 @@
 // SPDX-License-Identifier: MIT
 //
 
+import Foundation
+
+
 /// Represents errors that can occur when interacting with the CHOIR API.
-public enum CHOIRError: Error {
+public enum CHOIRError: LocalizedError {
     case internalServerError(message: String)
     case badRequest(message: String)
     case unauthorized(message: String)
