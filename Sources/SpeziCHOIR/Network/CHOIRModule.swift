@@ -152,7 +152,6 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
         } else {
             throw CHOIRError.internalServerError(message: "No more questions.")
         }
-
     }
 }
 
