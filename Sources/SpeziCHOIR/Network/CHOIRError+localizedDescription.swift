@@ -10,9 +10,7 @@ import Foundation
 
 
 extension CHOIRError {
-    /// Returns a human-readable description of the CHOIR error.
-    /// - Returns: A localized string describing the error.
-    public var localizedDescription: LocalizedStringResource {
+    private var errorDescription: LocalizedStringResource {
         switch self {
         case CHOIRError.internalServerError:
             "The server was unable to process the request."
@@ -25,5 +23,11 @@ extension CHOIRError {
         case CHOIRError.unknown:
             "An unknown error occurred."
         }
+    }
+    
+    /// Returns a human-readable description of the CHOIR error.
+    /// - Returns: A localized string describing the error.
+    public var localizedDescription: String {
+        String(localized: errorDescription)
     }
 }
