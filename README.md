@@ -50,7 +50,8 @@ class ExampleAppDelegate: SpeziAppDelegate {
             // your other modules...
         }
     }
-}```
+}
+```
 
 
 ## License
