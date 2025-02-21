@@ -1,0 +1,70 @@
+{
+    "displayStatus": {
+        "compatLevel": "1",
+        "questionId": "Order1",
+        "questionType": "form",
+        "surveyToken": "00000000000",
+        "stepNumber": "3",
+        "progress": 66,
+        "surveyProviderId": "1000",
+        "surveySectionId": "1128",
+        "surveySystemName": null,
+        "serverValidationMessage": null,
+        "sessionToken": null,
+        "sessionStatus": "question",
+        "resumeToken": null,
+        "resumeTimeoutMillis": null,
+        "styleSheetName": null,
+        "pageTitle": "SpeziCHOIR Study",
+        "locale": "en",
+        "showBack": false
+    },
+    "question": {
+            "title1": "\n        Based on your answers we would like to consider you for this study. Please provide your contact information:\n      ",
+            "terminal": false,
+            "fields": [
+                {
+                    "label": "First Name",
+                    "type": "text",
+                    "required": true,
+                    "fieldId": "10:0:first_name"
+                },
+                {
+                    "label": "Last Name",
+                    "type": "text",
+                    "required": true,
+                    "fieldId": "10:1:last_name"
+                },
+                {
+                    "label": "Email Address",
+                    "type": "text",
+                    "required": true,
+                    "fieldId": "10:2:email"
+                },
+                {
+                    "label": "Mobile Phone (with area code)",
+                    "type": "text",
+                    "required": true,
+                    "fieldId": "10:3:mobile_phone"
+                },
+                {
+                    "values": [
+                        {
+                            "label": "Yes, I agree to receive research-related contact.",
+                            "id": "1",
+                            "fields": []
+                        },
+                        {
+                            "label": "No, I do not want to receive research-related contact.",
+                            "id": "0",
+                            "fields": []
+                        }
+                    ],
+                    "label": "",
+                    "type": "radios",
+                    "required": true,
+                    "fieldId": "10:4:sms_ok"
+                }
+            ]
+        }
+}

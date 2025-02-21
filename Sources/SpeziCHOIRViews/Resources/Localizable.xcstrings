@@ -1,0 +1,36 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "An unknown error occurred." : {
+
+    },
+    "Continue" : {
+
+    },
+    "Failed to load question. %@" : {
+
+    },
+    "Finish" : {
+
+    },
+    "No question available." : {
+
+    },
+    "OK" : {
+
+    },
+    "Placeholder" : {
+
+    },
+    "Try Again" : {
+
+    },
+    "Unknown error." : {
+
+    },
+    "Unsupported Question Type." : {
+
+    }
+  },
+  "version" : "1.0"
+}

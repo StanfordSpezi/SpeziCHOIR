@@ -1,0 +1,27 @@
+{
+    "displayStatus": {
+        "compatLevel": "1",
+        "questionId": "Order1",
+        "questionType": "form",
+        "surveyToken": "00000000000",
+        "stepNumber": "4",
+        "progress": 100,
+        "surveyProviderId": "1000",
+        "surveySectionId": "1128",
+        "surveySystemName": null,
+        "serverValidationMessage": null,
+        "sessionToken": null,
+        "sessionStatus": "question",
+        "resumeToken": null,
+        "resumeTimeoutMillis": null,
+        "styleSheetName": null,
+        "pageTitle": "SpeziCHOIR Study",
+        "locale": "en",
+        "showBack": false
+    },
+    "question": {
+        "title1": "<div class=\"vertical\"><div class=\"cardinal-column\"><div class=\"sccrlogo\"></div><p>Thank you for your participation.</p></div><div class=\"column\"><p class=\"blue-text\">We will not contact you about this clinical trial.</p></div></div>",
+        "terminal": true,
+        "fields": []
+    }
+}

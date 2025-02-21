@@ -14,9 +14,37 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TemplatePackage"
-               BuildableName = "TemplatePackage"
-               BlueprintName = "TemplatePackage"
+               BlueprintIdentifier = "SpeziCHOIR"
+               BuildableName = "SpeziCHOIR"
+               BlueprintName = "SpeziCHOIR"
+               ReferencedContainer = "container:../..">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SpeziCHOIRViews"
+               BuildableName = "SpeziCHOIRViews"
+               BlueprintName = "SpeziCHOIRViews"
+               ReferencedContainer = "container:../..">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SpeziCHOIRTests"
+               BuildableName = "SpeziCHOIRTests"
+               BlueprintName = "SpeziCHOIRTests"
                ReferencedContainer = "container:../..">
             </BuildableReference>
          </BuildActionEntry>
