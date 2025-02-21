@@ -42,6 +42,10 @@ let package = Package(
                 .product(name: "FirebaseMessaging", package: "firebase-ios-sdk"),
                 .product(name: "FirebaseFirestore", package: "firebase-ios-sdk")
             ],
+            resources: [
+                .copy("Resources/MockData/Questions"),
+                .process("Resources/MockData/onboardingStep.json")
+            ],
             plugins: [
                 .plugin(name: "OpenAPIGenerator", package: "swift-openapi-generator")
             ] + swiftLintPlugin()

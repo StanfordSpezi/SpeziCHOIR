@@ -18,7 +18,9 @@ struct QuestionView: View {
     var body: some View {
         Text("Home")
             .sheet(isPresented: $openSheet) {
-                CHOIRQuestions(onFinish: { openSheet.toggle() }, surveySite: "")
+                NavigationStack {
+                    CHOIRQuestions(onFinish: { openSheet.toggle() }, surveySite: "")
+                }
             }
     }
 }

@@ -51,19 +51,66 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
     // periphery:ignore - false positive
     public static let valueConfiguration: AccountValueConfiguration = CHOIRModule.valueConfiguration
     
+    private var onboardingQuestion: Components.Schemas.Onboarding?
+    private var questionStack = [Components.Schemas.AssessmentStep]()
+    
     /// Initializes a new mock module instance.
-    public init() {}
+    public init() {
+        onboardingQuestion = decodeOnboardingQuestion()
+        questionStack = decodeQuestions()
+    }
+    
+    private func decodeQuestions() -> [Components.Schemas.AssessmentStep] {
+        let mockDataFiles = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: "Questions") ?? []
+        let jsonStrings = mockDataFiles.compactMap { try? String(contentsOf: $0, encoding: .utf8) }
+        
+        return jsonStrings.compactMap { jsonString in
+            guard let jsonData = jsonString.data(using: .utf8) else {
+                return nil
+            }
+            do {
+                return try JSONDecoder().decode(Components.Schemas.AssessmentStep.self, from: jsonData)
+            } catch {
+                print("Error decoding JSON:", error)
+                return nil
+            }
+        }
+    }
+    
+    private func decodeOnboardingQuestion() -> Components.Schemas.Onboarding? {
+        guard let mockDataFile = Bundle.module.url(
+            forResource: "onboardingStep",
+            withExtension: "json"
+        ) else {
+            print("Error: Could not locate onboardingStep.json in MockData directory")
+            return nil
+        }
+        let jsonString = try? String(contentsOf: mockDataFile, encoding: .utf8)
+        guard let jsonData = jsonString?.data(using: .utf8) else {
+            return nil
+        }
+        do {
+            return try JSONDecoder().decode(Components.Schemas.Onboarding.self, from: jsonData)
+        } catch {
+            print("Error decoding JSON:", error)
+            return nil
+        }
+    }
     
     /// Simulates the start of an onboarding process.
     /// - Parameter site: The survey site.
     /// - Returns: A mock onboarding response.
     @MainActor
     public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
-        // Using existing mock implementation
-        // swiftlint:disable:next line_length
-        let onboardingData = try Operations.getOnboarding.Output.Ok(body: Operations.getOnboarding.Output.Ok.Body.json(Components.Schemas.Onboarding(displayStatus: Components.Schemas.DisplayStatus(compatLevel: Optional("1"), questionId: "instructions", questionType: Components.Schemas.DisplayStatus.questionTypePayload.form, surveyToken: Optional("2000716078"), stepNumber: Optional("1"), progress: nil, surveyProviderId: Optional("afibScreening"), surveySectionId: nil, surveySystemName: nil, serverValidationMessage: nil, sessionToken: Optional("1beyi33timd4i1ihajy3qz381mwyqnfxzrm24wcr1sf1618zhlxdk5rmj333eb2f4gnljkuy211phpwlz1pfda7"), sessionStatus: Components.Schemas.DisplayStatus.sessionStatusPayload.question, resumeToken: Optional("449xongzvekinnc0t4s03jam13let0islhrthpdjpx9kq0s5h17ieeao9runlepbw3ysmsnbxt8l03jpr8ik5i"), resumeTimeoutMillis: Optional("30000"), styleSheetName: Optional("afib-2024-04-29.cache.css"), pageTitle: Optional("Stanford Heartbeat Study"), locale: "en", showBack: Optional(false)), question: Components.Schemas.FormQuestion(title1: "<div class=\"intro\">\n<p class=\"blue-text\">Welcome to Stanford Heartbeat Study!</p></div>", title2: nil, serverValidationMessage: nil, terminal: nil, fields: Optional([Components.Schemas.FormField(fieldId: "instructions", _type: Components.Schemas.FormField._typePayload.heading, label: Optional("<p class=\"blue-text\">Please click the \'Continue\' button to start the screening survey.</p>"), required: nil, min: nil, max: nil, attributes: nil, values: nil)]))))).body.json
-        try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-        return onboardingData
+        if let question = onboardingQuestion {
+            let onboardingData = try Operations.getOnboarding.Output.Ok(
+                body: Operations.getOnboarding.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return onboardingData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
     }
     
     /// Simulates the loading of the first or left off assessment step.
@@ -73,11 +120,15 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
     /// - Returns: A mock assessment step response.
     @MainActor
     public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
-        // Using existing mock implementation
-        // swiftlint:disable:next line_length
-        let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(body: Operations.postAssessmentStep.Output.Ok.Body.json(Components.Schemas.AssessmentStep(displayStatus: Components.Schemas.DisplayStatus(compatLevel: Optional("1"), questionId: "Order1", questionType: Components.Schemas.DisplayStatus.questionTypePayload.form, surveyToken: Optional("2000716078"), stepNumber: Optional("2"), progress: nil, surveyProviderId: Optional("1000"), surveySectionId: Optional("1128"), surveySystemName: nil, serverValidationMessage: nil, sessionToken: Optional("1beyi33timd4i1ihajy3qz381mwyqnfxzrm24wcr1sf1618zhlxdk5rmj333eb2f4gnljkuy211phpwlz1pfda7"), sessionStatus: Components.Schemas.DisplayStatus.sessionStatusPayload.question, resumeToken: nil, resumeTimeoutMillis: nil, styleSheetName: Optional("afib-2024-04-29.cache.css"), pageTitle: Optional("Stanford Heartbeat Study"), locale: "en", showBack: Optional(false)), question: Components.Schemas.AssessmentStep.questionPayload(value1: Optional(Components.Schemas.FormQuestion(title1: "<div class=\"intro\">\n<p class=\"blue-text\">Thank you!</p></div>", title2: Optional("I am completing this questionnaire for:"), serverValidationMessage: nil, terminal: true, fields: Optional([Components.Schemas.FormField(fieldId: "1:0:patient_age", _type: Components.Schemas.FormField._typePayload.radios, label: Optional(""), required: Optional(true), min: nil, max: nil, attributes: nil, values: Optional([Components.Schemas.FormFieldValue(id: "1", label: "Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity", fields: nil), Components.Schemas.FormFieldValue(id: "0", label: "Myself. I am younger than 18 years, and I am interested in learning more about a clinical trial opportunity", fields: nil)]))]))))))).body.json
-        try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-        return assessmentStepData
+        if let question = questionStack.popLast() {
+            let assessmentStepData = try Operations.getAssessment.Output.Ok(
+                body: Operations.getAssessment.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return assessmentStepData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
     }
     
     /// Simulates the continuation of an assessment step.
@@ -92,11 +143,16 @@ public final class CHOIRMockModule: CHOIRModuleProtocol {
         token: String,
         body: Operations.postAssessmentStep.Input.Body
     ) async throws -> Components.Schemas.AssessmentStep {
-        // Using existing mock implementation
-        // swiftlint:disable:next line_length
-        let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(body: Operations.postAssessmentStep.Output.Ok.Body.json(Components.Schemas.AssessmentStep(displayStatus: Components.Schemas.DisplayStatus(compatLevel: Optional("1"), questionId: "Order1", questionType: Components.Schemas.DisplayStatus.questionTypePayload.form, surveyToken: Optional("2000716078"), stepNumber: Optional("2"), progress: nil, surveyProviderId: Optional("1000"), surveySectionId: Optional("1128"), surveySystemName: nil, serverValidationMessage: nil, sessionToken: Optional("1beyi33timd4i1ihajy3qz381mwyqnfxzrm24wcr1sf1618zhlxdk5rmj333eb2f4gnljkuy211phpwlz1pfda7"), sessionStatus: Components.Schemas.DisplayStatus.sessionStatusPayload.question, resumeToken: nil, resumeTimeoutMillis: nil, styleSheetName: Optional("afib-2024-04-29.cache.css"), pageTitle: Optional("Stanford Heartbeat Study"), locale: "en", showBack: Optional(false)), question: Components.Schemas.AssessmentStep.questionPayload(value1: Optional(Components.Schemas.FormQuestion(title1: "<div class=\"intro\">\n<p class=\"blue-text\">Thank you!</p></div>", title2: Optional("I am completing this questionnaire for:"), serverValidationMessage: nil, terminal: true, fields: Optional([Components.Schemas.FormField(fieldId: "1:0:patient_age", _type: Components.Schemas.FormField._typePayload.radios, label: Optional(""), required: Optional(true), min: nil, max: nil, attributes: nil, values: Optional([Components.Schemas.FormFieldValue(id: "1", label: "Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity", fields: nil), Components.Schemas.FormFieldValue(id: "0", label: "Myself. I am younger than 18 years, and I am interested in learning more about a clinical trial opportunity", fields: nil)]))]))))))).body.json
-        try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-        return assessmentStepData
+        if let question = questionStack.popLast() {
+            let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(
+                body: Operations.postAssessmentStep.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return assessmentStepData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
+
     }
 }
 

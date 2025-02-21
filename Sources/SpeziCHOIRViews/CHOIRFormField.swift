@@ -93,6 +93,7 @@ struct CHOIRFormField: View {
                     lineLimit: .singleLine,
                     characterLimit: formField?.max.flatMap { Int($0) } ?? 100
                 )
+                    .accessibility(identifier: formField?.fieldId ?? "")
                     .questionRequired(formField?.required ?? false)
             case .datePicker:
                 DateTimeQuestion(

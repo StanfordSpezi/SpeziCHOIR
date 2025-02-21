@@ -14,6 +14,10 @@ SPDX-License-Identifier: MIT
 
 SpeziCHOIR and SpeziCHOIRViews provide the necessary building blocks for interacting with the CHOIR API and rendering its survey questions.
 
+|![Screenshot of question without answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/EmptyQuestion.png#gh-light-mode-only) ![Screenshot of question without answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/EmptyQuestion~dark.png#gh-dark-mode-only)|![Screenshot of question with `radios` type answer field](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/RadioQuestion.png#gh-light-mode-only) ![Screenshot of question with `radios` type answer field](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/RadioQuestion~dark.png#gh-dark-mode-only)| ![Screenshot of question with `text` type answer fields ](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/TextQuestion.png#gh-light-mode-only) ![Screenshot of question with `text` type answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/TextQuestion~dark.png#gh-dark-mode-only) |
+|:--:|:--:|:--:|
+|`CHOIRQuestions` rendering instructions without answer options|`CHOIRQuestions` rendering `radios` type question|`CHOIRQuestions` rendering `text` type questions|
+
 ## Installation
 
 The project can be added to your Xcode project or Swift Package using the [Swift Package Manager](https://github.com/apple/swift-package-manager).

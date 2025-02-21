@@ -1,0 +1,41 @@
+{
+    "displayStatus": {
+        "compatLevel": "1",
+        "questionId": "instructions",
+        "questionType": "form",
+        "surveyToken": "00000000000",
+        "stepNumber": "1",
+        "progress": null,
+        "surveyProviderId": "afibScreening",
+        "surveySectionId": null,
+        "surveySystemName": null,
+        "serverValidationMessage": null,
+        "sessionToken": null,
+        "sessionStatus": "question",
+        "resumeToken": null,
+        "resumeTimeoutMillis": null,
+        "styleSheetName": null,
+        "pageTitle": "SpeziCHOIR Study",
+        "locale": "en",
+        "showBack": false
+    },
+    "question": {
+        "title1": "<div class=\"intro\">\n<p class=\"blue-text\">Welcome to the Spezi CHOIR Study!</p></div>",
+        "title2": null,
+        "serverValidationMessage": null,
+        "terminal": null,
+        "fields": [
+            {
+                "fieldId": "instructions",
+                "type": "heading",
+                "label": "<p class=\"blue-text\">Please click the 'Continue' button to start the screening survey.</p>",
+                "required": null,
+                "min": null,
+                "max": null,
+                "attributes": null,
+                "values": null
+            }
+        ]
+    }
+}
+

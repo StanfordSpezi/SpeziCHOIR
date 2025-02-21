@@ -65,7 +65,10 @@ extension CHOIRQuestions {
                 loading = true
     
                 if let surveyToken = UserDefaults.standard.string(forKey: "survey-token") {
+                    self.surveyToken = surveyToken
                     let assessmentStepData = try await start(choir: choir, surveySite: surveySite, token: surveyToken)
+                    self.assessmentStep = assessmentStepData
+                    
                     handleAssessmentStepChange(assessmentStepData)
                     loading = false
                 } else {

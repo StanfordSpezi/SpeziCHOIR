@@ -33,6 +33,38 @@ class TestAppUITests: XCTestCase {
         XCTAssertTrue(choirQuestionButton.waitForExistence(timeout: 1))
         choirQuestionButton.tap()
         
+        XCTAssertTrue(continueButton.exists)
+        continueButton.tap()
+        
+        sleep(1)
+        
+        let firstNameTextField = app.textFields["10:0:first_name"]
+        firstNameTextField.tap()
+        firstNameTextField.typeText("Leland")
+        
+        let lastNameTextField = app.textFields["10:1:last_name"]
+        lastNameTextField.tap()
+        lastNameTextField.typeText("Stanford")
+        
+        let emailTextField = app.textFields["10:2:email"]
+        emailTextField.tap()
+        emailTextField.typeText("leland@stanford.edu")
+        
+        app.swipeUp()
+        
+        let phoneTextField = app.textFields["10:3:mobile_phone"]
+        phoneTextField.tap()
+        phoneTextField.typeText("6501111111")
+        
+        let choirQuestionButton2 = app.staticTexts[
+            "Yes, I agree to receive research-related contact."
+        ]
+        XCTAssertTrue(choirQuestionButton2.waitForExistence(timeout: 1))
+        choirQuestionButton2.tap()
+        
+        XCTAssertTrue(continueButton.exists)
+        continueButton.tap()
+        
         let finishButton = app.buttons["Finish"]
         XCTAssertTrue(finishButton.waitForExistence(timeout: 1))
         finishButton.tap()

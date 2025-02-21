@@ -1,0 +1,51 @@
+{
+    "displayStatus": {
+        "compatLevel": "1",
+        "questionId": "Order1",
+        "questionType": "form",
+        "surveyToken": "00000000000",
+        "stepNumber": "2",
+        "progress": 33,
+        "surveyProviderId": "1000",
+        "surveySectionId": "1128",
+        "surveySystemName": null,
+        "serverValidationMessage": null,
+        "sessionToken": null,
+        "sessionStatus": "question",
+        "resumeToken": null,
+        "resumeTimeoutMillis": null,
+        "styleSheetName": null,
+        "pageTitle": "SpeziCHOIR Study",
+        "locale": "en",
+        "showBack": false
+    },
+    "question": {
+        "title1": "By completing the pre-screening questionnaire, you consent to the collection and use of your information to assess your eligibility for a clinical trial, with your data kept confidential but accessible by regulatory authorities.",
+        "title2": "I am completing this questionnaire for:",
+        "serverValidationMessage": null,
+        "terminal": false,
+        "fields": [
+            {
+                "fieldId": "1:0:patient_age",
+                "type": "radios",
+                "label": "",
+                "required": true,
+                "min": null,
+                "max": null,
+                "attributes": null,
+                "values": [
+                    {
+                        "id": "1",
+                        "label": "Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity",
+                        "fields": null
+                    },
+                    {
+                        "id": "0",
+                        "label": "Myself. I am younger than 18 years, and I am interested in learning more about a clinical trial opportunity",
+                        "fields": null
+                    }
+                ]
+            }
+        ]
+    }
+}
