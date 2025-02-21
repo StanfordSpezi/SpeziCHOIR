@@ -19,10 +19,22 @@ import SwiftUI
 /// 
 /// The `CHOIRQuestions` view manages the display and submission of CHOIR survey questions, including:
 /// - Progress tracking through the survey
-/// - Question rendering based on type (form, radio buttons, etc.)
+/// - Question rendering based on the questions field types (text, radio, etc.)
 /// - Navigation between questions
 /// - Error handling and retry logic
 /// - Survey completion
+///
+/// Below is a short code example on how to use the `CHOIRQuestions` view.
+///
+/// ```swift
+/// struct MyView: View {
+///     var body: some View {
+///         NavigationStack {
+///             CHOIRQuestions(onFinish: handleFinish, surveySite: "example-survey")
+///         }
+///     }
+/// }
+/// ```
 public struct CHOIRQuestions: View {
     @Environment(\.choirModule) var choir
     @Environment(\.dismiss) var dismiss

@@ -10,16 +10,37 @@ SPDX-License-Identifier: MIT
        
 -->
 
-SpeziCHOIR contains the necessary CHOIR type generation, account configuration and networking middleware for interacting with the CHOIR API.
+Spezi CHOIR contains the necessary CHOIR type generation, account configuration and networking middleware for interacting with the CHOIR API.
 
-## Overview
 
+## Setup
+
+### 1. Add Spezi CHOIR as a Dependency
+
+You need to add the SpeziCHOIR Swift package to
+[your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
+[Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
+
+> [!IMPORTANT]  
+> If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
+
+### 2. Add the Module to your App Configuration
+
+Add the `CHOIRModule` to your App's configuration:
+```
+class ExampleAppDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+            CHOIRModule()
+            // other modules...
+        }
+    }
+}
+```
 
 ## Types
 
 ### Account
-
-- ``PreferredCommunication``
 
 - ``CHOIRAccountStorageProvider``
 

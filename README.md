@@ -12,19 +12,43 @@ SPDX-License-Identifier: MIT
 
 [![Build and Test](https://github.com/StanfordSpezi/SpeziCHOIR/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/StanfordSpezi/SpeziCHOIR/actions/workflows/build-and-test.yml)
 
-SpeziCHOIR and SpeziCHOIRViews provide the necessary building blocks for interacting with the CHOIR API and rendering its survey questions.
+Spezi CHOIR integrates ResearchKit surveys with the Stanford CHOIR API.
 
 |![Screenshot of question without answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/EmptyQuestion.png#gh-light-mode-only) ![Screenshot of question without answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/EmptyQuestion~dark.png#gh-dark-mode-only)|![Screenshot of question with `radios` type answer field](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/RadioQuestion.png#gh-light-mode-only) ![Screenshot of question with `radios` type answer field](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/RadioQuestion~dark.png#gh-dark-mode-only)| ![Screenshot of question with `text` type answer fields ](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/TextQuestion.png#gh-light-mode-only) ![Screenshot of question with `text` type answer fields](Sources/SpeziCHOIRViews/SpeziCHOIRViews.docc/Resources/TextQuestion~dark.png#gh-dark-mode-only) |
 |:--:|:--:|:--:|
 |`CHOIRQuestions` rendering instructions without answer options|`CHOIRQuestions` rendering `radios` type question|`CHOIRQuestions` rendering `text` type questions|
 
-## Installation
+The package contains two targets:
+- `SpeziCHOIR`: Handles interactions with the CHOIR API
+- `SpeziCHOIRViews`: Provides views for rendering survey questions
 
-The project can be added to your Xcode project or Swift Package using the [Swift Package Manager](https://github.com/apple/swift-package-manager).
+You use the `CHOIRQuestions` view to visualize a CHOIR survey.
 
-**Xcode:** For an Xcode project, follow the instructions on [adding package dependencies to your app](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app).
 
-**Swift Package:** You can follow the [Swift Package Manager documentation about defining dependencies](https://github.com/apple/swift-package-manager/blob/main/Documentation/Usage.md#defining-dependencies) to add this project as a dependency to your Swift Package.
+## Setup
+
+### 1. Add Spezi CHOIR as a Dependency
+
+You need to add the SpeziCHOIR Swift package to
+[your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
+[Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
+
+> [!IMPORTANT]  
+> If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
+
+### 2. Add the Module to your App
+
+Add the `CHOIRModule` to your App's configuration:
+```
+class ExampleAppDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+            CHOIRModule()
+            // your other modules ...
+        }
+    }
+}
+```
 
 
 ## License
