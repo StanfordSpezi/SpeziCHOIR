@@ -29,7 +29,7 @@ The `CHOIRQuestions` view allows you to integrate CHOIR surveys into your SwiftU
 > `CHOIRQuestions` should be wrapped in a `NavigationStack` so that the view can properly render the survey title in the navigation title. When using `CHOIRQuestions` within ``SpeziOnboarding`` ([GitHub](https://github.com/StanfordSpezi/SpeziOnboarding)) it's not necessary to wrap it (as SpeziOnboarding's OnboardingStack already provides a NavigationStack).
 
 Here's a simple example of how to use `CHOIRQuestions`:
-```
+```swift
 struct MyView: View {
     var body: some View {
         NavigationStack {
@@ -40,7 +40,7 @@ struct MyView: View {
 ```
 
 Here's an example of how to use `CHOIRQuestions` within ``SpeziOnboarding``:
-```
+```swift
 struct MyOnboardingView: View {
     var body: some View {
         OnboardingStack {

@@ -27,12 +27,15 @@ You need to add the SpeziCHOIR Swift package to
 ### 2. Add the Module to your App Configuration
 
 Add the `CHOIRModule` to your App's configuration:
-```
+```swift
+import Spezi
+import SpeziCHOIR
+
 class ExampleAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
             CHOIRModule()
-            // other modules...
+            // your other modules...
         }
     }
 }
