@@ -29,7 +29,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-openapi-runtime.git", from: "1.7.0"),
         .package(url: "https://github.com/apple/swift-openapi-urlsession.git", from: "1.0.2"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "11.6.0"),
-        .package(url: "https://github.com/StanfordBDHG/ResearchKit.git", from: "4.0.0-beta.2")
+        .package(url: "https://github.com/StanfordBDHG/ResearchKit.git", from: "4.0.0-beta.3")
     ] + swiftLintPackage(),
     targets: [
         .target(

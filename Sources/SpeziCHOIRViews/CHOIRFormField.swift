@@ -127,6 +127,7 @@ struct CHOIRFormField: View {
                     .padding()
             }
         }
+            .environment(\.questionContext, .formEmbedded)
             .onAppear {
                 if let label = formField?.label {
                     do {
