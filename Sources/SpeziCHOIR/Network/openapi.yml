@@ -1,0 +1,1377 @@
+#
+# This source file is part of the Stanford Spezi open source project
+#
+# SPDX-FileCopyrightText: 2023 Stanford University
+#
+# SPDX-License-Identifier: MIT
+#
+
+openapi: 3.0.0
+info:
+  title: CHOIR Mobile API
+  version: v1 Draft
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: >
+    API specification for CHOIR mobile applications integrated with the CHOIR platform.
+    All endpoints require JWT authentication, and user identification is derived from the token.
+
+security:
+  - bearerAuth: [ ]
+
+tags:
+  - name: Sites
+    description: Endpoints related to CHOIR sites.
+  - name: Assessments
+    description: Endpoints related to retrieving and submitting user assessments.
+  - name: Participant Management
+    description: Endpoints related to participant (aka user) account management.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Address:
+      type: object
+      description: >
+        Structured address information with proper validation.
+      properties:
+        street:
+          type: string
+          pattern: '^(\d{1,}) [a-zA-Z0-9\s]+(\,)? [a-zA-Z]+(\,)? [A-Z]{2} [0-9]{5,6}$'
+          minimum: 5
+          maximum: 100
+        city:
+          type: string
+          pattern: '^[a-zA-Z.-]+(?:[\s-][\/a-zA-Z.]+)*$'
+          minimum: 5
+          maximum: 50
+        state:
+          type: string
+          pattern: '/^[a-zA-Z0-9 ]*$/'
+          minimum: 5
+          maximum: 50
+        country:
+          type: string
+        postalCode:
+          type: string
+          pattern: '^\d{5}([\-]?\d{4})?$'
+          description: >
+            In the US, the zip code should be 5 digits long. Optionally, it can include a hyphen and 4 additional digits.
+            Other nations use a mix of digits and letters of varying lengths; some use a space or dash.
+            Some do not use postal codes.
+      required:
+        - street
+        - city
+        - state
+
+    Assessment:
+      type: object
+      description: >
+        A CHOIR assessment assigned to a user.
+      properties:
+        id:
+          type: number
+          description: a CHOIR assessment ID
+        title:
+          type: string
+          description: CHOIR assessment title
+        description:
+          type: string
+          description: CHOIR assessment description
+        surveyName:
+          type: string
+          description: CHOIR survey name
+        surveyType:
+          type: string
+          description: CHOIR survey type
+        order:
+          type: number
+          description: order in which assessments should be taken
+        token:
+          type: string
+          description: survey token/pin
+        status:
+          type: string
+          description: user status on completing assessment
+          enum: [ notStarted, inProgress, done ]
+      required:
+        - id
+        - title
+        - surveyName
+        - surveyType
+        - order
+        - token
+        - status
+
+    Log:
+      type: object
+      description: >
+        CHOIR logging API
+      properties:
+        level:
+          type: string
+          enum: [ DEBUG, INFO, WARN, ERROR ]
+        message:
+          type: string
+          minimum: 0
+          maximum: 2147483647
+      required:
+        - level
+        - message
+
+    Site:
+      type: object
+      description: >
+        A site (aka program) represents a study or other activity that a user can participate in.
+        It may include one or more assessments.  Users are enrolled/unenrolled in to site programs.
+      properties:
+        site:
+          description: site id
+          type: string
+        title:
+          type: string
+          description: site title shown in the UI
+        description:
+          type: string
+          description: site description
+        enabled:
+          type: boolean
+          description: true if this program is currently available to enrolled users
+        languages:
+          type: array
+          description: list of supported languages for this site
+          items:
+            type: string
+        created:
+          type: string
+          format: date-time
+      required:
+        - site
+        - title
+        - enabled
+
+    FormQuestion:
+      type: object
+      description: A form question, with all info required to display it in the UI
+      properties:
+        title1:
+          type: string
+          description: the form question in human readable language
+        title2:
+          type: string
+          description: additional question text
+        serverValidationMessage:
+          type: string
+          description: human readable validation error message if an error was detected server-side.
+        terminal:
+          type: boolean
+          description: true if this is the last question in the survey. Assume false if not provided.
+        fields:
+          type: array
+          description: >
+            Array of fields in which question answers should be collected.
+            This could be a single radio select, or multiple fields e.g., checkbox fields.
+          items:
+            $ref: '#/components/schemas/FormField'
+      required:
+        - title1
+
+    FormField:
+      type: object
+      description: A form field with metadata describing the answer expected.
+      properties:
+        fieldId:
+          type: string
+          description: unique identifier for this field
+        type:
+          type: string
+          description: type of question (required)
+          enum: [ "number", "textArea", "checkboxes", "radios", "heading", "text", "videoLink", "numericScale", \
+                  "numericSlider", "textBoxSet", "collapsibleContentField", "datePicker", "dropdown", "radioSetGrid", \
+                  "url", "formattedText", "jsPsych" ]
+        label:
+          type: string
+          description: Human readable label for the form field
+        required:
+          type: boolean
+          description: true if an answer to this field is required.
+        min:
+          type: string
+          description: >
+            minimum possible value for this question response,
+            e.g., a numeric minimum, or minimum allowable number of characters.
+        max:
+          type: string
+          description: >
+            maximum possible value for this question response,
+            e.g., a numeric maximum value, or maximum allowable number of characters.
+        attributes:
+          type: object
+          description: >
+            optional information on value validation such as:
+            Step - Step attribute allows checking number range 1-10, step by 2),
+            StyleName -  custom field format, or
+            Align - gets horizontal layout
+            rightLabel & leftLabel - for numeric scale & sliders
+            Dropdown filter to restrict
+            collapsibleContent boolean controls whether content can be toggled on/off visibility
+            icon for collapsibleContent - by default CHOIR uses a + icon but can be overridden
+            Kaltura video attributes: partnerId, targetId, wid, uiConfId, entryId, videoHeight,
+            videoHeight, frameHeight, frameWidth, useThumbnail
+            Datepicker attributes:
+        values:
+          type: array
+          description: Array of answers to the question associated with this form field.  This might be one answer for
+            a radio button, or many for something like a checkbox or bodymap.
+          items:
+            $ref: '#/components/schemas/FormFieldValue'
+      required:
+        - fieldId
+        - type
+
+    FormFieldValue:
+      type: object
+      description: >
+        data to be displayed on a FormPage. Some fields (such as radios) may
+        contain a set of values (choices), and each of these choices may contain other
+        fields. Fields contained within a value are shown or hidden based on whether the
+        containing value is selected.
+      properties:
+        id:
+          type: string
+          description: form field identifier
+        label:
+          type: string
+          description: human readable label for this form field value
+        fields:
+          type: array
+          description: array of form field responses
+          items:
+            type: string
+      required:
+        - id
+        - label
+
+    AssessmentStep:
+      type: object
+      description: >
+        The next step in an assessment.
+      properties:
+        displayStatus:
+          $ref: '#/components/schemas/DisplayStatus'
+        question:
+          anyOf:
+            - $ref: '#/components/schemas/FormQuestion'
+#            TODO more types of questions
+#            - $ref: '#/components/schemas/...'
+      required:
+        - displayStatus
+        - question
+
+    DisplayStatus:
+      type: object
+      description: >
+        Assessment session information and instructions to the client.
+      properties:
+        compatLevel:
+          type: string
+          description: >
+            compatibility level of this DisplayStatus JSON format.
+        questionId:
+          type: string
+          description: unique question identifier within a questionnaire
+        questionType:
+          type: string
+          enum: [ "radioset", "buttonList", "textList", "bodyMap", "slider", "numericScale", "form", "thanks", \
+                  "collapsibleRadioset", "skip", "close", "sizedMap", "customThanks", "formattedText", "jsPsych" ]
+          description: question type from the enum above.
+        surveyToken:
+          type: string
+          description: survey token used to track which survey is being done
+        stepNumber:
+          type: string
+          description: A sequentially incremented number representing the page number within a survey.
+        progress:
+          type: number
+          description: percent of questionnaire or survey completed.
+        surveyProviderId:
+          type: string
+          description: Unique choir identifier for healthcare provider program that assigned the survey.  May be null.
+        surveySectionId:
+          type: string
+          description: unique identifier for the current section (questionnaire) within a survey.
+        surveySystemName:
+          type: string
+          description: uniquely identifies the survey handler e.g., afib survey handler
+        serverValidationMessage:
+          type: string
+          description: human readable validation error message if an error was detected server-side.
+        sessionToken:
+          type: string
+          description: >
+            current active session token.  A survey may have different session tokens if the participant
+            logs out or the session expires and a new token is required.
+        sessionStatus:
+          type: string
+          enum: [ "tokenLookup", "tokenLookupInvalid", "question", "questionInvalid", "retry", "clearSession" ]
+          description: session status.
+        resumeToken:
+          type: string
+          description: >
+            shouldn't need to use this.
+        resumeTimeoutMillis:
+          type: string
+          description: >
+            shouldn't need to use this.
+        styleSheetName:
+          type: string
+          description: style sheet used by Web client to format the survey for a custom look and feel.
+        pageTitle:
+          type: string
+          description: questionnaire page title
+        locale:
+          type: string
+          description: human language locale, e.g., "EN" or "ES".
+        showBack:
+          type: boolean
+          description: \
+            true if the back button is supported on this page of the survey.
+            CHOIR only allows user to go back one step (aka one page).
+      required:
+        - questionId
+        - questionType
+        - sessionStatus
+        - locale
+
+    FormAnswer:
+      type: object
+      description: TBD
+      properties:
+        fieldAnswers:
+          type: array
+          description: Array of answers for a page (form).
+          items:
+            $ref: '#/components/schemas/FormFieldAnswer'
+
+    FormFieldAnswer:
+      type: object
+      description: \
+        JSON with array of all the field id/choice values for the page.
+      properties:
+        fieldId:
+          type: string
+          description: Unique field ID for a question
+        choice:
+          type: array
+          description: \
+            choice - this may be be a single value in the array for something like an radio button question, number or text,
+            or an array with multiple values such as a checkbox question
+          items:
+            type: string
+      required:
+        - fieldId
+        - choice
+
+    AssessmentSubmit:
+      type: object
+      description: >
+        Submit session information and answers provided for a step in an assessment.
+      properties:
+        submitStatus:
+          $ref: '#/components/schemas/SubmitStatus'
+        answers:
+          anyOf:
+            - $ref: '#/components/schemas/FormAnswer'
+    #            TODO more types of answers
+    #            - $ref: '#/components/schemas/...'
+
+    SubmitStatus:
+      type: object
+      description: >
+        Assessment session information and instructions to the client.
+      properties:
+        questionId:
+          type: string
+          description: unique question identifier.
+        questionType:
+          type: string
+          enum: [ "radioset", "buttonList", "textList", "bodyMap", "slider", "numericScale", "form", "thanks", "collapsibleRadioset", "skip", "close", "sizedMap", "customThanks", "formattedText", "jsPsych" ]
+          description: TBD.
+        stepNumber:
+          type: number
+          description: A sequentially incremented number representing the page in the assessment.
+        surveyProviderId:
+          type: string
+          description: Unique choir identifier for healthcare provider program that assigned the survey.  May be null.
+        surveySectionId:
+          type: string
+          description: unique identifier for the current section (questionnaire) within a survey.
+        surveySystemName:
+          type: string
+          description: uniquely identifies the survey handler e.g., afib survey handler
+        sessionToken:
+          type: string
+          description: session token.  This will change if the user logs off or it expires.
+        callTimeMillis:
+          type: number
+          description: Time execute this API in milliseconds.
+        renderTimeMillis:
+          type: number
+          description: time to render the UI in milliseconds.
+        thinkTimeMillis:
+          type: number
+          description: Participant think time after UI is rendered until they submit the answer(s) in milliseconds.
+        retryCount:
+          type: number
+          description: Number of retries.
+        locale:
+          type: string
+          description: human language locale, e.g., "EN" or "ES".
+        compatLevel:
+          type: string
+          description: >
+            compatibility level of this DisplayStatus JSON format.
+        backRequest:
+          type: boolean
+          description: true if the participant clicked the back button to return to the previous page.
+      required:
+        - questionId
+        - questionType
+        - stepNumber
+        - locale
+
+    Home:
+      type: object
+      description: >
+        Home page information
+      properties:
+        title:
+          type: string
+          description: home site title
+        assessments:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assessment'
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
+        resources:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resource'
+
+
+    Notification:
+      type: object
+      description: >
+        A notification sent to the user
+      properties:
+        type:
+          type: string
+          enum: [ Email, Text ]
+        surveyToken:
+          type: number
+          description: assessment identifier for which this notification was generated.
+        participantId:
+          type: string
+          description: unique CHOIR participant identifier.
+        surveyDate:
+          type: string
+          format: date-time
+        surveyType:
+          type: string
+          description: survey type e.g., screening, baseline, followup, etc.
+        status:
+          type: string
+        created:
+          type: string
+          format: date-time
+          description: notification create timestamp.
+        sent:
+          type: string
+          format: date-time
+          description: notification sent timestamp.
+        message:
+          type: string
+          description: message sent to user
+      required:
+        - surveyToken
+        - participantId
+        - surveyType
+        - status
+        - created
+        - sent
+        - message
+
+    Onboarding:
+      type: object
+      description: >
+        Program onboarding response.  All fields will be returned but arrays may be empty.
+      properties:
+        displayStatus:
+          $ref: '#/components/schemas/DisplayStatus'
+        question:
+          $ref: '#/components/schemas/FormQuestion'
+      required:
+        - displayStatus
+        - question
+
+    Resource:
+      type: object
+      description: >
+        A resource that may be presented to the user e.g., PDF document, trailer, etc.
+      properties:
+        id:
+          type: string
+          description: unique identifier associated with this resource
+        title:
+          type: string
+          description: human readable resource title
+        description:
+          type: string
+          description: human readable resource description
+        type:
+          type: string
+          enum: [ pdf, trailer, webPage ]
+        url:
+          type: string
+          description: URL to access the resource
+      required:
+        - id
+        - title
+        - type
+        - url
+
+    Status:
+      type: object
+      description: >
+        CHOIR site database status.
+      properties:
+        database:
+          type: string
+        lastPoll:
+          type: string
+      required:
+        - database
+        - lastPoll
+
+    ParticipantAttribute:
+      type: object
+      description: >
+        Participant attributes.
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        value:
+          type: string
+        created:
+          type: string
+          format: date-time
+        changed:
+          type: string
+          format: date-time
+      required:
+        - name
+        - value
+        - created
+
+    Participant:
+      type: object
+      description: >
+        Participant profile including personal details.
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        email:
+          type: string
+        homePhone:
+          type: string
+        mobilePhone:
+          type: string
+        created:
+          type: string
+          format: date-time
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParticipantAttribute'
+      required:
+        - firstName
+        - lastName
+        - email
+
+paths:
+  /v1/sites:
+    get:
+      operationId: getSites
+      tags:
+        - Sites
+      summary: List all sites
+      description: >
+        Retrieves a list of sites (aka programs)
+        The participant is identified implicitly through the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+
+      responses:
+        '200':
+          description: Sites retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Site'
+              examples:
+                example1:
+                  summary: Example site list
+                  value: [
+                    {
+                      site: "afib",
+                      title: "Mobile Heartbeat Study",
+                      description: "Heartbeat study using mobile devices",
+                      languages: [ "en" ],
+                      enabled: true,
+                      created: "2024-09-03T09:12:28Z"
+                    }
+                  ]
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '500':
+          description: Internal error
+
+  /v1/sites/{site}/log:
+    post:
+      operationId: postLog
+      tags:
+        - Sites
+      summary: Log to CHOIR
+      description: >
+        This endpoint is used to log a client message to the CHOIR log for support purposes.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Log'
+            examples:
+              example1:
+                summary: Example log message
+                value:
+                  level: INFO
+                  message: This is a sample log message
+      responses:
+        '200':
+          description: Participant created or updated successfully.
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '500':
+          description: Internal error
+
+  /v1/sites/{site}/participant:
+    post:
+      operationId: postParticipant
+      tags:
+        - Participant Management
+      summary: Create or update participant account
+      description: >
+        This endpoint is used to create or update participant information.
+        The participant is identified implicitly through the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Participant'
+            examples:
+              example1:
+                summary: Example participant update
+                value:
+                  firstName: "John"
+                  lastName: "Doe"
+                  email: "john.doe@example.com"
+                  homePhone: "+14155552671"
+
+      responses:
+        '200':
+          description: User created or updated successfully.
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '500':
+          description: Internal error
+    get:
+      operationId: getParticipant
+      tags:
+        - Participant Management
+      summary: Get participant account information
+      description: >
+        Retrieve participant account information
+        The participant is identified implicitly through the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Participant account retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Participant'
+              examples:
+                example1:
+                  summary: Example user data
+                  value: {
+                    firstName: "Jane",
+                    lastName: "Smith",
+                    email: "jane.smith@example.com",
+                    homePhone: "14153331234",
+                    mobilePhone: "14155551234",
+                    created: 2024-09-03T09:12:28Z,
+                    attributes: [
+                      {
+                        id: 1,
+                        name: "language",
+                        value: "En",
+                        created: 2024-09-03T09:12:28Z
+                      }
+                    ]
+                  }
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '404':
+          description: Participant not found.
+
+    delete:
+      operationId: unenrollParticipant
+      tags:
+        - Participant Management
+      summary: Withdraw/unenroll participant from site study
+      description: >
+        Withdraw a user from the specified site study based on the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Participant withdrawn successfully.
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '404':
+          description: Participant not enrolled.
+
+  /v1/sites/{site}/assessments/{surveyToken}/start:
+    get:
+      operationId: getAssessment
+      tags:
+        - Assessments
+      summary: Start an assessment
+      description: >
+        Start or resume a partially completed assessment.
+        The user is identified implicitly through the JWT authentication token.
+        The assessment is identified by the survey id.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: surveyToken
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Questionnaire responses submitted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentStep'
+              examples:
+                example1:
+                  summary: Example instructions (step 1 of afib survey)
+                  value: {
+                    displayStatus: {
+                      "showBack": false,
+                      "resumeToken": "546jrnvok6bs1lqp2vz7npnspaptfsbnkvwjq10sqrj1fmuhfje23eje39310p1brrhdfhbr6s7mro8tvosmu8u",
+                      "questionId": "instructions",
+                      "pageTitle": "Stanford Heartbeat Study",
+                      "sessionStatus": "question",
+                      "resumeTimeoutMillis": "30000",
+                      "surveyToken": "tsh4ac3dio2611shy1m84pxhvpekt514j4hgv3janjcj86zkd1g5uoollj6wd81g582r1s7h1qo1tfj8p7kpeb2k",
+                      "locale": "en",
+                      "styleSheetName": "afib-2024-04-29.cache.css",
+                      "surveyProviderId": "afibScreening",
+                      "sessionToken": "1p4iqnywib4szccu2pqijykgl1ifinl03yp2d1x6x6fi8ltz4ef0lmp8uinbg01btq1wzxbs3lg1i1tmou2302t6",
+                      "stepNumber": "1",
+                      "questionType": "form",
+                      "compatLevel": "1"
+                    },
+                    question: {
+                      "title1": "<div class=\"intro\">\n<p class=\"blue-text\">Welcome to Stanford Heartbeat Study!</p></div>",
+                      "terminal": false,
+                      "fields": [ {
+                        "fieldId": "instructions",
+                        "type": "heading",
+                        "label": "<p class=\"blue-text\">Please click the 'Continue' button to start the screening survey.</p>"
+                      } ]
+                    }
+                  }
+                example2:
+                  summary: checkbox question
+                  value: {
+                    displayStatus: {
+                      "showBack" : false,
+                      "questionId" : "Order36",
+                      "pageTitle" : "Stanford Heartbeat Study",
+                      "sessionStatus" : "question",
+                      "surveyToken" : "18k1nw7fo1h6h1do60ftkfsj2t1czctz157vihnpleq55rl1k2ofi70se7vrj54rue3tnnz89652qjrlyx9t48z",
+                      "locale" : "en",
+                      "surveySectionId" : "1131",
+                      "styleSheetName" : "afib-2024-04-29.cache.css",
+                      "surveyProviderId" : "1000",
+                      "sessionToken" : "ltgjljxvmo3y1q2mmv55yl4xkd61kxglxu5clws37n1oeb9o1o5hb1s69fsue1o94ej9r9c1mys5tz1zf96ndl",
+                      "progress" : 64,
+                      "stepNumber" : "9",
+                      "questionType" : "form",
+                      "compatLevel" : "1"
+                    },
+                    question: {
+                      "title1": "Please choose the race and/or ethnicity that describes yourself. Choose all that apply.",
+                      "terminal": false,
+                      "fields": [ {
+                        "label": "",
+                        "type": "checkboxes",
+                        "required": true,
+                        "fieldId": "36:0:race",
+                        "values": [ {
+                          "label": "Hispanic or Latino",
+                          "id": "1"
+                        }, {
+                          "label": "American Indian or Alaskan Native",
+                          "id": "2"
+                        }, {
+                          "label": "Asian",
+                          "id": "3"
+                        }, {
+                          "label": "Black or African American",
+                          "id": "4"
+                        }, {
+                          "label": "Native Hawaiian or other Pacific Islander",
+                          "id": "5"
+                        }, {
+                          "label": "White",
+                          "id": "6"
+                        }, {
+                          "label": "Other",
+                          "id": "7"
+                        }, {
+                          "label": "Prefer not to say",
+                          "id": "0"
+                        } ]
+                      } ]
+                    }
+                  }
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Assessment not found.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /v1/sites/{site}/assessments/{surveyToken}/continue:
+    post:
+      operationId: postAssessmentStep
+      tags:
+        - Assessments
+      summary: Submit assessment responses and retrieve next step
+      description: >
+        Submits the user's responses after completing a step in an assessment, and
+        obtain the next page of content to display.
+        The user is identified implicitly through the JWT authentication token.
+        The assessment is identified by the survey id.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: surveyToken
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: lang
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentSubmit'
+            examples:
+              example1:
+                summary: Example submit of instructions page
+                value: {
+                  submitStatus: {
+                    "questionId" : "instructions",
+                    "callTimeMillis" : 928244,
+                    "renderTimeMillis" : 1177,
+                    "surveyProviderId" : "afibScreening",
+                    "sessionToken" : "1p4iqnywib4szccu2pqijykgl1ifinl03yp2d1x6x6fi8ltz4ef0lmp8uinbg01btq1wzxbs3lg1i1tmou2302t6",
+                    "thinkTimeMillis" : 346019,
+                    "stepNumber" : 1,
+                    "locale" : "en",
+                    "questionType" : "form",
+                    "compatLevel" : "1"
+                  },
+                  answers: {
+                    "fieldAnswers" : [ ]
+                  }
+                }
+
+              example2:
+                summary: Sample submit of radio button (patient age > 18)
+                value: {
+                  submitStatus: {
+                    "questionType": "form",
+                    "callTimeMillis": 22962,
+                    "renderTimeMillis": 11,
+                    "thinkTimeMillis": 18196,
+                    "locale": "en",
+                    "questionId": "Order1",
+                    "sessionToken": "oy2qwl5kmkrh1ddin5p17g0fu14t4ju3kr6e3waul7z8j9alenzvye0zr760zf4pr4b6gjlcq11bbaqdk0rfmx3",
+                    "surveyProviderId": "1000",
+                    "surveySectionId": "1131",
+                    "compatLevel": "1",
+                    "stepNumber": 2
+                  },
+                  answers: {
+                    "fieldAnswers": [ {
+                      "fieldId": "1:0:patient_age",
+                      "choice": [ "1" ]
+                    } ]
+                  }
+                }
+
+              example3:
+                summary: Sample submit of contact info
+                value: {
+                  submitStatus: {
+                    "questionType" : "form",
+                    "callTimeMillis" : 228,
+                    "renderTimeMillis" : 13,
+                    "thinkTimeMillis" : 48534,
+                    "locale" : "en",
+                    "questionId" : "Order10",
+                    "sessionToken" : "1p4iqnywib4szccu2pqijykgl1ifinl03yp2d1x6x6fi8ltz4ef0lmp8uinbg01btq1wzxbs3lg1i1tmou2302t6",
+                    "surveyProviderId" : "1000",
+                    "surveySectionId" : "1128",
+                    "compatLevel" : "1",
+                    "stepNumber" : 4
+                  },
+                  answers: {
+                    "fieldAnswers" : [ {
+                      "fieldId" : "10:0:first_name",
+                      "choice" : [ "Testy" ]
+                    }, {
+                      "fieldId" : "10:1:middle_name",
+                      "choice" : [ "T" ]
+                    }, {
+                      "fieldId" : "10:2:last_name",
+                      "choice" : [ "Tester" ]
+                    }, {
+                      "fieldId" : "10:3:email",
+                      "choice" : [ "testy@example.com" ]
+                    }, {
+                      "fieldId" : "10:4:home_phone",
+                      "choice" : [ "" ]
+                    }, {
+                      "fieldId" : "10:5:mobile_phone",
+                      "choice" : [ "415-321-1234" ]
+                    }, {
+                      "fieldId" : "10:6:sms_ok",
+                      "choice" : [ "1" ]
+                    } ]
+                  }
+                }
+      responses:
+        '200':
+          description: Questionnaire responses submitted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentStep'
+              examples:
+                example1:
+                  summary: Sample of consent page with radio button response
+                  value: {
+                    displayStatus: {
+                      "showBack" : false,
+                      "questionId" : "Order1",
+                      "pageTitle" : "Stanford Heartbeat Study",
+                      "sessionStatus" : "question",
+                      "surveyToken" : "tsh4ac3dio2611shy1m84pxhvpekt514j4hgv3janjcj86zkd1g5uoollj6wd81g582r1s7h1qo1tfj8p7kpeb2k",
+                      "locale" : "en",
+                      "surveySectionId" : "1129",
+                      "styleSheetName" : "afib-2024-04-29.cache.css",
+                      "surveyProviderId" : "1000",
+                      "sessionToken" : "1p4iqnywib4szccu2pqijykgl1ifinl03yp2d1x6x6fi8ltz4ef0lmp8uinbg01btq1wzxbs3lg1i1tmou2302t6",
+                      "stepNumber" : "2",
+                      "questionType" : "form",
+                      "compatLevel" : "1"
+                    },
+                    question: {
+                      "title1" : "<p>By completing the pre-screening questionnaire, you consent ... </p>",
+                      "title2" : "I am completing this questionnaire for:",
+                      "terminal": false,
+                      "fields" : [ {
+                        "values" : [ {
+                          "label" : "Myself. I am 18 years of age or older, and I am interested in learning more about a clinical trial opportunity",
+                          "id" : "1"
+                        }, {
+                          "label" : "Myself. I am younger than 18 years, and I am interested in learning more about a clinical trial opportunity",
+                          "id" : "0"
+                        } ],
+                        "label" : "",
+                        "type" : "radios",
+                        "required" : true,
+                        "fieldId" : "1:0:patient_age"
+                      } ]
+                    }
+                  }
+                example2:
+                  summary: Sample of year of birth
+                  value: {
+                    displayStatus: {
+                      "showBack" : false,
+                      "questionId" : "Order32",
+                      "pageTitle" : "Stanford Heartbeat Study",
+                      "sessionStatus" : "question",
+                      "surveyToken" : "tsh4ac3dio2611shy1m84pxhvpekt514j4hgv3janjcj86zkd1g5uoollj6wd81g582r1s7h1qo1tfj8p7kpeb2k",
+                      "locale" : "en",
+                      "surveySectionId" : "1131",
+                      "styleSheetName" : "afib-2024-04-29.cache.css",
+                      "surveyProviderId" : "1000",
+                      "sessionToken" : "1p4iqnywib4szccu2pqijykgl1ifinl03yp2d1x6x6fi8ltz4ef0lmp8uinbg01btq1wzxbs3lg1i1tmou2302t6",
+                      "progress" : 60,
+                      "stepNumber" : "7",
+                      "questionType" : "form",
+                      "compatLevel" : "1"
+                    },
+                    question: {
+                      "title1" : "Please enter your year of birth.<br>\n<p class=\"cursive\">We need this information because some studies are only suitable for people above or below\n  a certain age.</p>\n",
+                      "terminal": false,
+                      "fields" : [ {
+                        "min" : "1900",
+                        "max" : "2024",
+                        "label" : "",
+                        "type" : "number",
+                        "required" : true,
+                        "fieldId" : "32:0:birth_year"
+                      } ]
+                    }
+
+                  }
+
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+          content:
+            text/plain:
+              schema:
+                type: string
+        '404':
+          description: Assessment not found.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /v1/sites/{site}/onboarding:
+    get:
+      operationId: getOnboarding
+      tags:
+        - Sites
+      summary: Retrieve onboarding content for a program
+      description: >
+        Return the token to launch the onboarding assessment, if any.
+        The user is identified implicitly through the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: lang
+          in: query
+          description: preferred human language
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Onboarding questionnaires retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Onboarding'
+              examples:
+                example1:
+                  summary: Onboarding a new participant
+                  value: {
+                    displayStatus: {
+                      showBack: false,
+                      resumeToken: "ptbstgrcbc3kpwbmsxmakgh61jlf4z66dwe9b1koq8myos0fzc1i5ex2cjvy22lgdrq9yek39b7f6sih37bhpio",
+                      questionId: "instructions",
+                      pageTitle: "Stanford Heartbeat Study",
+                      sessionStatus: "question",
+                      resumeTimeoutMillis: "30000",
+                      surveyToken: "10ybfyzyt7qa11mz1f02lpmlb7w93mcdsz611fyrnjs89d59rze2s5z8wmk7kc1vvpc35jlyws613t9ecvgev1xa",
+                      locale: "en",
+                      styleSheetName: "afib-2024-04-29.cache.css",
+                      surveyProviderId: "afibScreening",
+                      sessionToken: "1h9lboj1fbuz31ef9aeovckz571f77cwmixpms1ft2oyr27qyhfya1c8pxxqo0r7ji7291yjk471844z0izyzv8r",
+                      stepNumber: "1",
+                      questionType: "form",
+                      compatLevel: "1"
+                    },
+                    question: {
+                      title1: "<div class=\"intro\">\n<p class=\"blue-text\">Welcome to Stanford Heartbeat Study!</p></div>",
+                      fields: [{
+                          label: "<p class=\"blue-text\">Please click the 'Continue' button to start the screening survey.</p>",
+                          type: "heading",
+                          fieldId: "instructions"
+                        }]
+                    }
+                  }
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal error
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /v1.0/sites/{site}/home:
+    get:
+      operationId: getHome
+      tags:
+        - Sites
+      summary: Retrieve home screen content for a program
+      description: >
+        Fetches the list of surveys, and associated resources to be displayed on
+        the home screen for the site. The user is identified implicitly through
+        the JWT authentication token.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: lang
+          description: preferred human language
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Home screen questionnaires retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Home'
+              examples:
+                example1:
+                  summary: Example home screen assessment info
+                  value:
+                    title: "Program One"
+                    assessments: [
+                      {
+                        id: 123456789,
+                        title: "Daily Checkin",
+                        surveyType: "Checkin.0001",
+                        surveyName: "Checkin",
+                        token: "987654321",
+                        order: 1,
+                        status: "inProgress"
+                      }
+                    ]
+                    notifications: [
+                      {
+                        surveyToken: 987654321,
+                        participantId: "PID-3334",
+                        surveyType: "Screening",
+                        status: "Sent",
+                        created: 2024-09-03T09:12:28Z,
+                        sent: 2024-09-04T12:12:28Z,
+                        message: "Sent email"
+                      }
+                    ]
+                    resources: [
+                      {
+                        id: check-1-trailer,
+                        title: "Day one trailer",
+                        type: "trailer",
+                        url: 'https://choir.stanford.edu/heartbeatapi/day-one-trailer.mp4'
+                      }
+                    ]
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '404':
+          description: program not found.
+        '500':
+          description: Internal error
+
+  /v1/sites/{site}/status:
+    get:
+      operationId: getSiteStatus
+      tags:
+        - Sites
+        - System
+      summary: Verify connectivity to CHOIR service
+      description: >
+        This endpoint is used to verify CHOIR is up and responding to requests.
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: site
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: CHOIR site status retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+              examples:
+                example1:
+                  summary: Example CHOIR site OK status
+                  value:
+                    database: OK
+                    lastPoll: 2024-09-03T10:00:00.123
+                example2:
+                  summary: Example CHOIR site failed status
+                  value:
+                    database: Failed
+                    lastPoll: 2024-09-03T10:00:00.123
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized (likely the user email has not been verified)
+        '500':
+          description: Internal error
