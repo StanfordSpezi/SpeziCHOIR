@@ -57,26 +57,26 @@ jobs:
           name: build-environment
           path: Sources/SpeziCHOIR/Network/
   packageios:
-  name: Build and Test Swift Package iOS
-  needs: setup_environment
-  runs-on: macos-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+    name: Build and Test Swift Package iOS
+    needs: setup_environment
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Download OpenAPI YAML Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: openapi-yaml
-        path: Sources/SpeziCHOIR/Network/
+      - name: Download OpenAPI YAML Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-yaml
+          path: Sources/SpeziCHOIR/Network/
 
-    - name: Build and Test
-      uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-      with:
-        runsonlabels: '["macOS", "self-hosted"]'
-        scheme: SpeziCHOIR-Package
-        resultBundle: SpeziCHOIR-Package-iOS.xcresult
-        artifactname: SpeziCHOIR-Package-iOS.xcresult
+      - name: Build and Test
+        uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+        with:
+          runsonlabels: '["macOS", "self-hosted"]'
+          scheme: SpeziCHOIR-Package
+          resultBundle: SpeziCHOIR-Package-iOS.xcresult
+          artifactname: SpeziCHOIR-Package-iOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
