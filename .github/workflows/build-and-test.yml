@@ -18,7 +18,7 @@ jobs:
   swiftlint:
     name: SwiftLint
     uses: StanfordBDHG/.github/.github/workflows/swiftlint.yml@v2
-  download_openapi:
+    download_openapi:
     name: Download OpenAPI YAML from CHOIR Repository
     runs-on: macos-latest
     steps:
@@ -31,6 +31,15 @@ jobs:
         run: |
           curl -L -H "Authorization: token $GITHUB_TOKEN" -o Sources/SpeziCHOIR/Network/openapi.yml \
             https://raw.githubusercontent.com/susom/choir/master/choir-api/choir-api.yaml
+
+      - name: Validate OpenAPI YAML
+        run: |
+          if [ ! -s Sources/SpeziCHOIR/Network/openapi.yml ]; then
+            echo "Error: OpenAPI file is empty or missing!"
+            exit 1
+          fi
+          echo "OpenAPI file downloaded successfully:"
+          cat Sources/SpeziCHOIR/Network/openapi.yml
 
       - name: Upload OpenAPI YAML as Artifact
         uses: actions/upload-artifact@v4
