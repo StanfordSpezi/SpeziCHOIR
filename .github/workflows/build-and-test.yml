@@ -18,7 +18,7 @@ jobs:
   swiftlint:
     name: SwiftLint
     uses: StanfordBDHG/.github/.github/workflows/swiftlint.yml@v2
-    download_openapi:
+  download_openapi:
     name: Download OpenAPI YAML from CHOIR Repository
     runs-on: macos-latest
     steps:
