@@ -18,8 +18,7 @@ jobs:
   swiftlint:
     name: SwiftLint
     uses: StanfordBDHG/.github/.github/workflows/swiftlint.yml@v2
-
-  download_openapi_spec:
+  download_openapi:
     name: Download OpenAPI YAML from CHOIR Repository
     runs-on: macos-latest
     steps:
@@ -38,9 +37,28 @@ jobs:
         with:
           name: openapi-yaml
           path: Sources/SpeziCHOIR/Network/openapi.yml
+  setup_environment:
+    name: Setup Build Environment
+    needs: download_openapi
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download OpenAPI YAML Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: openapi-yaml
+          path: Sources/SpeziCHOIR/Network/
+
+      - name: Upload Prepared Environment
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-environment
+          path: Sources/SpeziCHOIR/Network/
   packageios:
     name: Build and Test Swift Package iOS
-    needs: download_openapi_spec
+    needs: setup_environment
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
     with:
       runsonlabels: '["macOS", "self-hosted"]'
