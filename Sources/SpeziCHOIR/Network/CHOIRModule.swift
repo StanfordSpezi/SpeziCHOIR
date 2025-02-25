@@ -12,8 +12,6 @@ import OpenAPIURLSession
 import Spezi
 import SpeziAccount
 
-// swiftlint:disable missing_docs
-
 
 /// A protocol that defines the interface for interacting with the CHOIR API.
 /// 
