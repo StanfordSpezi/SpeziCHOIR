@@ -20,12 +20,20 @@ jobs:
     uses: StanfordBDHG/.github/.github/workflows/swiftlint.yml@v2
   packageios:
     name: Build and Test Swift Package iOS
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziCHOIR-Package
-      resultBundle: SpeziCHOIR-Package-iOS.xcresult
-      artifactname: SpeziCHOIR-Package-iOS.xcresult
+    runs-on: ${{ fromJSON(inputs.runsonlabels || '["macOS", "self-hosted"]') }}
+    steps:
+      - name: Download OpenAPI YAML from CHOIR Repository
+        env:
+          GITHUB_TOKEN: ${{ secrets.CHOIR_REPO_TOKEN }} 
+        run: |
+          curl -L -H "Authorization: token $GITHUB_TOKEN" -o Sources/SpeziCHOIR/Network/openapi.yml \
+            https://raw.githubusercontent.com/susom/choir/master/choir-api/choir-api.yaml
+      - uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+        with:
+          runsonlabels: '["macOS", "self-hosted"]'
+          scheme: SpeziCHOIR-Package
+          resultBundle: SpeziCHOIR-Package-iOS.xcresult
+          artifactname: SpeziCHOIR-Package-iOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
