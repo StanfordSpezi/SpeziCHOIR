@@ -47,12 +47,6 @@ jobs:
       scheme: SpeziCHOIR-Package
       resultBundle: SpeziCHOIR-Package-iOS.xcresult
       artifactname: SpeziCHOIR-Package-iOS.xcresult
-    steps:
-      - name: Download OpenAPI YAML Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: openapi-yaml
-          path: Sources/SpeziCHOIR/Network/
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
