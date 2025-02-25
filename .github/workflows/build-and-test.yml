@@ -32,15 +32,6 @@ jobs:
           curl -L -H "Authorization: token $GITHUB_TOKEN" -o Sources/SpeziCHOIR/Network/openapi.yml \
             https://raw.githubusercontent.com/susom/choir/master/choir-api/choir-api.yaml
 
-      - name: Validate OpenAPI YAML
-        run: |
-          if [ ! -s Sources/SpeziCHOIR/Network/openapi.yml ]; then
-            echo "Error: OpenAPI file is empty or missing!"
-            exit 1
-          fi
-          echo "OpenAPI file downloaded successfully:"
-          cat Sources/SpeziCHOIR/Network/openapi.yml
-
       - name: Upload OpenAPI YAML as Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -66,14 +57,26 @@ jobs:
           name: build-environment
           path: Sources/SpeziCHOIR/Network/
   packageios:
-    name: Build and Test Swift Package iOS
-    needs: setup_environment
-    uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
-    with:
-      runsonlabels: '["macOS", "self-hosted"]'
-      scheme: SpeziCHOIR-Package
-      resultBundle: SpeziCHOIR-Package-iOS.xcresult
-      artifactname: SpeziCHOIR-Package-iOS.xcresult
+  name: Build and Test Swift Package iOS
+  needs: setup_environment
+  runs-on: macos-latest
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download OpenAPI YAML Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: openapi-yaml
+        path: Sources/SpeziCHOIR/Network/
+
+    - name: Build and Test
+      uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
+      with:
+        runsonlabels: '["macOS", "self-hosted"]'
+        scheme: SpeziCHOIR-Package
+        resultBundle: SpeziCHOIR-Package-iOS.xcresult
+        artifactname: SpeziCHOIR-Package-iOS.xcresult
   ios:
     name: Build and Test iOS
     uses: StanfordSpezi/.github/.github/workflows/xcodebuild-or-fastlane.yml@v2
