@@ -59,5 +59,4 @@ class ExampleAppDelegate: SpeziAppDelegate {
 
 - ``CHOIRError``
 
-- ``CHOIREnvironment``
 

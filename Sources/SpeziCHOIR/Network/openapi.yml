@@ -17,12 +17,6 @@ info:
     API specification for CHOIR mobile applications integrated with the CHOIR platform.
     All endpoints require JWT authentication, and user identification is derived from the token.
 
-servers:
-  - url: https://choir.med.stanford.edu/afib-api
-    description: AFIB production server (uses live data)
-  - url: https://choir-demo.med.stanford.edu/afib-api
-    description: AFIB sandbox test server
-
 security:
   - bearerAuth: [ ]
 

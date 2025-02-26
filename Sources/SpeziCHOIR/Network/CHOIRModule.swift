@@ -12,8 +12,6 @@ import OpenAPIURLSession
 import Spezi
 import SpeziAccount
 
-// swiftlint:disable missing_docs
-
 
 /// A protocol that defines the interface for interacting with the CHOIR API.
 /// 
@@ -35,12 +33,6 @@ public protocol CHOIRModuleProtocol: Module, EnvironmentAccessible {
         token: String,
         body: Operations.postAssessmentStep.Input.Body
     ) async throws -> Components.Schemas.AssessmentStep
-}
-
-// periphery:ignore - false positive
-public enum CHOIREnvironment {
-    case production
-    case demo
 }
 
 /// A mock implementation of the `CHOIRModuleProtocol` that provides simulated responses for testing purposes.
@@ -167,24 +159,13 @@ public final class CHOIRModule: CHOIRModuleProtocol {
     
     // periphery:ignore - false positive
     /// Initializes a new CHOIR module instance.
-    /// - Parameter environment: The environment to use for the CHOIR module.
-    public init(environment: CHOIREnvironment) {
-        switch environment {
-        case .production:
-            self.client = Client(
-                // swiftlint:disable:next force_try
-                serverURL: try! Servers.Server1.url(),
-                transport: URLSessionTransport(),
-                middlewares: [FirebaseAuthMiddleware()]
-            )
-        case .demo:
-            self.client = Client(
-                // swiftlint:disable:next force_try
-                serverURL: try! Servers.Server2.url(),
-                transport: URLSessionTransport(),
-                middlewares: [FirebaseAuthMiddleware()]
-            )
-        }
+    /// - Parameter serverURL: The URL of the CHOIR server.
+    public init(serverURL: URL) {
+        self.client = Client(
+            serverURL: serverURL,
+            transport: URLSessionTransport(),
+            middlewares: [FirebaseAuthMiddleware()]
+        )
     }
     
     /// Initially loads the assessment step and the survey token for subsequent steps needed in `continueAssessmentStep`.
