@@ -60,7 +60,7 @@ extension CHOIRQuestions {
             }
         }
         
-        func handleInitialQuestionLoading(choir: CHOIRModuleProtocol, surveySite: String) async {
+        func handleInitialQuestionLoading(choir: CHOIRService, surveySite: String) async {
             do {
                 loading = true
     
@@ -97,18 +97,18 @@ extension CHOIRQuestions {
             }
         }
         
-        private func onboarding(choir: CHOIRModuleProtocol, surveySite: String) async throws -> Components.Schemas.Onboarding {
+        private func onboarding(choir: CHOIRService, surveySite: String) async throws -> Components.Schemas.Onboarding {
             let onboardingData = try await choir.onboarding(site: surveySite)
             return onboardingData
         }
         
-        private func start(choir: CHOIRModuleProtocol, surveySite: String, token: String) async throws -> Components.Schemas.AssessmentStep {
+        private func start(choir: CHOIRService, surveySite: String, token: String) async throws -> Components.Schemas.AssessmentStep {
             let assessmentStepData = try await choir.startAssessmentStep(site: surveySite, token: token)
             return assessmentStepData
         }
         
         func assessmentContinue(
-            choir: CHOIRModuleProtocol,
+            choir: CHOIRService,
             surveySite: String,
             token: String,
             results: ResearchFormResult,

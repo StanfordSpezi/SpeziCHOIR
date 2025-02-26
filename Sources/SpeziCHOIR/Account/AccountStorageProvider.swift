@@ -38,7 +38,7 @@ public actor CHOIRAccountStorageProvider: AccountStorageProvider {
         reloadTasks[accountId] = Task {
             defer { reloadTasks[accountId] = nil }
             do {
-                let user = try await choir.client.getParticipant(
+                let user = try await choir.choirService.client.getParticipant(
                     path: .init(site: siteId),
                     headers: .init(accept: [.init(contentType: .json)])
                 ).ok.body.json
@@ -80,7 +80,7 @@ public actor CHOIRAccountStorageProvider: AccountStorageProvider {
             mobilePhone: details.phoneNumber ?? ""
         )
         
-        _ = try await choir.client.postParticipant(
+        _ = try await choir.choirService.client.postParticipant(
             path: .init(site: siteId),
             body: .json(user)
         ).ok
@@ -104,7 +104,7 @@ public actor CHOIRAccountStorageProvider: AccountStorageProvider {
     public func delete(_ accountId: String) async throws {
         await disassociate(accountId)
         
-        _ = try await choir.client.unenrollParticipant(
+        _ = try await choir.choirService.client.unenrollParticipant(
             path: .init(site: siteId)
         ).ok
     }

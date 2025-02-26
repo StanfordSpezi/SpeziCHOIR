@@ -36,7 +36,7 @@ import SwiftUI
 /// }
 /// ```
 public struct CHOIRQuestions: View {
-    @Environment(\.choirModule) var choir
+    @Environment(CHOIRModule.self) var choir
     @Environment(\.dismiss) var dismiss
     
     var surveySite: String
@@ -67,7 +67,7 @@ public struct CHOIRQuestions: View {
             .padding(.horizontal)
             .background(Color(UIColor.systemGroupedBackground))
             .task {
-                await viewModel.handleInitialQuestionLoading(choir: choir, surveySite: surveySite)
+                await viewModel.handleInitialQuestionLoading(choir: choir.choirService, surveySite: surveySite)
             }
             .alert("Failed to load question. \(viewModel.errorMessage ?? "Unknown error.")", isPresented: $viewModel.showHandlingOnboardingAlert) {
                 Button("OK", role: .cancel) {
@@ -75,7 +75,7 @@ public struct CHOIRQuestions: View {
                 }
                 Button("Try Again") {
                     Task {
-                        await viewModel.handleInitialQuestionLoading(choir: choir, surveySite: surveySite)
+                        await viewModel.handleInitialQuestionLoading(choir: choir.choirService, surveySite: surveySite)
                     }
                 }
             }
@@ -123,7 +123,7 @@ public struct CHOIRQuestions: View {
                 AsyncButton {
                     if let surveyToken = viewModel.surveyToken {
                         await viewModel.assessmentContinue(
-                            choir: choir,
+                            choir: choir.choirService,
                             surveySite: surveySite,
                             token: surveyToken,
                             results: viewModel.managedFormResult,
@@ -160,7 +160,7 @@ public struct CHOIRQuestions: View {
 #Preview {
     CHOIRQuestions(onFinish: {}, surveySite: "")
         .previewWith {
-            CHOIRMockModule()
+            CHOIRMockService()
         }
 }
 #endif
