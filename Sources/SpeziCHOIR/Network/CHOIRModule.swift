@@ -155,6 +155,7 @@ public final class CHOIRMockService: CHOIRService {
     
     /// Initializes a new mock module instance.
     public init() {
+        // swiftlint:disable:next force_unwrapping
         super.init(serverURL: URL(string: "https://mock.example.com")!)
         onboardingQuestion = decodeOnboardingQuestion()
         questionStack = decodeQuestions()
@@ -201,7 +202,7 @@ public final class CHOIRMockService: CHOIRService {
     /// - Parameter site: The survey site.
     /// - Returns: A mock onboarding response.
     @MainActor
-    public override func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
+    override public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
         if let question = onboardingQuestion {
             let onboardingData = try Operations.getOnboarding.Output.Ok(
                 body: Operations.getOnboarding.Output.Ok.Body.json(question)
@@ -219,7 +220,7 @@ public final class CHOIRMockService: CHOIRService {
     ///   - token: The survey token.
     /// - Returns: A mock assessment step response.
     @MainActor
-    public override func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
+    override public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
         if let question = questionStack.popLast() {
             let assessmentStepData = try Operations.getAssessment.Output.Ok(
                 body: Operations.getAssessment.Output.Ok.Body.json(question)
@@ -238,7 +239,7 @@ public final class CHOIRMockService: CHOIRService {
     ///   - body: The body of the assessment step.
     /// - Returns: A mock assessment step response.
     @MainActor
-    public override func continueAssessmentStep(
+    override public func continueAssessmentStep(
         site: String,
         token: String,
         body: Operations.postAssessmentStep.Input.Body
