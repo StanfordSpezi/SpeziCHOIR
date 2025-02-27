@@ -13,142 +13,8 @@ import Spezi
 import SpeziAccount
 
 
-/// A protocol that defines the interface for interacting with the CHOIR API.
-/// 
-/// This protocol defines the core methods needed to interact with the API, including
-/// onboarding and continuing assessment steps.
-public protocol CHOIRModuleProtocol: Module, EnvironmentAccessible {
-    // periphery:ignore - false positive
-    static var valueConfiguration: AccountValueConfiguration { get }
-    
-    @MainActor
-    func onboarding(site: String) async throws -> Components.Schemas.Onboarding
-    
-    @MainActor
-    func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep
-    
-    @MainActor
-    func continueAssessmentStep(
-        site: String,
-        token: String,
-        body: Operations.postAssessmentStep.Input.Body
-    ) async throws -> Components.Schemas.AssessmentStep
-}
-
-/// A mock implementation of the `CHOIRModuleProtocol` that provides simulated responses for testing purposes.
-/// 
-/// This module returns predefined mock data with a simulated network latency to help test CHOIR API integrations
-/// without requiring a connection to the actual server.
-public final class CHOIRMockModule: CHOIRModuleProtocol {
-    // periphery:ignore - false positive
-    public static let valueConfiguration: AccountValueConfiguration = CHOIRModule.valueConfiguration
-    
-    private var onboardingQuestion: Components.Schemas.Onboarding?
-    private var questionStack = [Components.Schemas.AssessmentStep]()
-    
-    /// Initializes a new mock module instance.
-    public init() {
-        onboardingQuestion = decodeOnboardingQuestion()
-        questionStack = decodeQuestions()
-    }
-    
-    private func decodeQuestions() -> [Components.Schemas.AssessmentStep] {
-        let mockDataFiles = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: "Questions") ?? []
-        let jsonStrings = mockDataFiles.compactMap { try? String(contentsOf: $0, encoding: .utf8) }
-        
-        return jsonStrings.compactMap { jsonString in
-            guard let jsonData = jsonString.data(using: .utf8) else {
-                return nil
-            }
-            do {
-                return try JSONDecoder().decode(Components.Schemas.AssessmentStep.self, from: jsonData)
-            } catch {
-                print("Error decoding JSON:", error)
-                return nil
-            }
-        }
-    }
-    
-    private func decodeOnboardingQuestion() -> Components.Schemas.Onboarding? {
-        guard let mockDataFile = Bundle.module.url(
-            forResource: "onboardingStep",
-            withExtension: "json"
-        ) else {
-            print("Error: Could not locate onboardingStep.json in MockData directory")
-            return nil
-        }
-        let jsonString = try? String(contentsOf: mockDataFile, encoding: .utf8)
-        guard let jsonData = jsonString?.data(using: .utf8) else {
-            return nil
-        }
-        do {
-            return try JSONDecoder().decode(Components.Schemas.Onboarding.self, from: jsonData)
-        } catch {
-            print("Error decoding JSON:", error)
-            return nil
-        }
-    }
-    
-    /// Simulates the start of an onboarding process.
-    /// - Parameter site: The survey site.
-    /// - Returns: A mock onboarding response.
-    @MainActor
-    public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
-        if let question = onboardingQuestion {
-            let onboardingData = try Operations.getOnboarding.Output.Ok(
-                body: Operations.getOnboarding.Output.Ok.Body.json(question)
-            ).body.json
-            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-            return onboardingData
-        } else {
-            throw CHOIRError.internalServerError(message: "No more questions.")
-        }
-    }
-    
-    /// Simulates the loading of the first or left off assessment step.
-    /// - Parameters:
-    ///   - site: The survey site.
-    ///   - token: The survey token.
-    /// - Returns: A mock assessment step response.
-    @MainActor
-    public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
-        if let question = questionStack.popLast() {
-            let assessmentStepData = try Operations.getAssessment.Output.Ok(
-                body: Operations.getAssessment.Output.Ok.Body.json(question)
-            ).body.json
-            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-            return assessmentStepData
-        } else {
-            throw CHOIRError.internalServerError(message: "No more questions.")
-        }
-    }
-    
-    /// Simulates the continuation of an assessment step.
-    /// - Parameters:
-    ///   - site: The survey site.
-    ///   - token: The survey token.
-    ///   - body: The body of the assessment step.
-    /// - Returns: A mock assessment step response.
-    @MainActor
-    public func continueAssessmentStep(
-        site: String,
-        token: String,
-        body: Operations.postAssessmentStep.Input.Body
-    ) async throws -> Components.Schemas.AssessmentStep {
-        if let question = questionStack.popLast() {
-            let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(
-                body: Operations.postAssessmentStep.Output.Ok.Body.json(question)
-            ).body.json
-            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
-            return assessmentStepData
-        } else {
-            throw CHOIRError.internalServerError(message: "No more questions.")
-        }
-    }
-}
-
-/// A module implementation of the `CHOIRModuleProtocol` that provides a real network connection to the CHOIR API.
-public final class CHOIRModule: CHOIRModuleProtocol {
+/// A service that provides a real network connection to the CHOIR API.
+public class CHOIRService: Module {
     public static let valueConfiguration: AccountValueConfiguration = [
         .requires(\.userId),
         .supports(\.name),
@@ -266,5 +132,127 @@ public final class CHOIRModule: CHOIRModuleProtocol {
         } catch {
             return "Unkown error."
         }
+    }
+}
+
+
+/// A mock implementation of the `CHOIRService`.
+/// 
+/// This module returns predefined mock data with a simulated network latency to help test CHOIR API integrations
+/// without requiring a connection to the actual server.
+public final class CHOIRMockService: CHOIRService {
+    private var onboardingQuestion: Components.Schemas.Onboarding?
+    private var questionStack = [Components.Schemas.AssessmentStep]()
+    
+    /// Initializes a new mock module instance.
+    public init() {
+        // swiftlint:disable:next force_unwrapping
+        super.init(serverURL: URL(string: "https://mock.example.com")!)
+        onboardingQuestion = decodeOnboardingQuestion()
+        questionStack = decodeQuestions()
+    }
+    
+    private func decodeQuestions() -> [Components.Schemas.AssessmentStep] {
+        let mockDataFiles = Bundle.module.urls(forResourcesWithExtension: "json", subdirectory: "Questions") ?? []
+        let jsonStrings = mockDataFiles.compactMap { try? String(contentsOf: $0, encoding: .utf8) }
+        
+        return jsonStrings.compactMap { jsonString in
+            guard let jsonData = jsonString.data(using: .utf8) else {
+                return nil
+            }
+            do {
+                return try JSONDecoder().decode(Components.Schemas.AssessmentStep.self, from: jsonData)
+            } catch {
+                print("Error decoding JSON:", error)
+                return nil
+            }
+        }
+    }
+    
+    private func decodeOnboardingQuestion() -> Components.Schemas.Onboarding? {
+        guard let mockDataFile = Bundle.module.url(
+            forResource: "onboardingStep",
+            withExtension: "json"
+        ) else {
+            print("Error: Could not locate onboardingStep.json in MockData directory")
+            return nil
+        }
+        let jsonString = try? String(contentsOf: mockDataFile, encoding: .utf8)
+        guard let jsonData = jsonString?.data(using: .utf8) else {
+            return nil
+        }
+        do {
+            return try JSONDecoder().decode(Components.Schemas.Onboarding.self, from: jsonData)
+        } catch {
+            print("Error decoding JSON:", error)
+            return nil
+        }
+    }
+    
+    /// Simulates the start of an onboarding process.
+    /// - Parameter site: The survey site.
+    /// - Returns: A mock onboarding response.
+    @MainActor
+    override public func onboarding(site: String) async throws -> Components.Schemas.Onboarding {
+        if let question = onboardingQuestion {
+            let onboardingData = try Operations.getOnboarding.Output.Ok(
+                body: Operations.getOnboarding.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return onboardingData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
+    }
+    
+    /// Simulates the loading of the first or left off assessment step.
+    /// - Parameters:
+    ///   - site: The survey site.
+    ///   - token: The survey token.
+    /// - Returns: A mock assessment step response.
+    @MainActor
+    override public func startAssessmentStep(site: String, token: String) async throws -> Components.Schemas.AssessmentStep {
+        if let question = questionStack.popLast() {
+            let assessmentStepData = try Operations.getAssessment.Output.Ok(
+                body: Operations.getAssessment.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return assessmentStepData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
+    }
+    
+    /// Simulates the continuation of an assessment step.
+    /// - Parameters:
+    ///   - site: The survey site.
+    ///   - token: The survey token.
+    ///   - body: The body of the assessment step.
+    /// - Returns: A mock assessment step response.
+    @MainActor
+    override public func continueAssessmentStep(
+        site: String,
+        token: String,
+        body: Operations.postAssessmentStep.Input.Body
+    ) async throws -> Components.Schemas.AssessmentStep {
+        if let question = questionStack.popLast() {
+            let assessmentStepData = try Operations.postAssessmentStep.Output.Ok(
+                body: Operations.postAssessmentStep.Output.Ok.Body.json(question)
+            ).body.json
+            try await Task.sleep(for: .milliseconds(300)) // simulate 300ms network latency
+            return assessmentStepData
+        } else {
+            throw CHOIRError.internalServerError(message: "No more questions.")
+        }
+    }
+}
+
+
+/// A module for interacting with the CHOIR API.
+public class CHOIRModule: Module, EnvironmentAccessible {
+    public let choirService: CHOIRService
+    
+    public init(service: CHOIRService) {
+        self.choirService = service
     }
 }

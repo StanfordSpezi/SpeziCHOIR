@@ -20,9 +20,9 @@ class TestAppDelegate: SpeziAppDelegate {
                     providers: [.emailAndPassword]
                 ),
                 storageProvider: TestAccountStorageProvider(),
-                configuration: CHOIRMockModule.valueConfiguration
+                configuration: CHOIRMockService.valueConfiguration
             )
-            CHOIRMockModule()
+            CHOIRModule(service: CHOIRMockService())
         }
     }
 }
