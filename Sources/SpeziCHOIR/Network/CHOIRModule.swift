@@ -13,16 +13,6 @@ import Spezi
 import SpeziAccount
 
 
-/// A module for interacting with the CHOIR API.
-public class CHOIRModule: Module, EnvironmentAccessible {
-    public let choirService: CHOIRService
-    
-    public init(service: CHOIRService) {
-        self.choirService = service
-    }
-}
-
-
 /// A service that provides a real network connection to the CHOIR API.
 public class CHOIRService: Module {
     public static let valueConfiguration: AccountValueConfiguration = [
@@ -254,5 +244,15 @@ public final class CHOIRMockService: CHOIRService {
         } else {
             throw CHOIRError.internalServerError(message: "No more questions.")
         }
+    }
+}
+
+
+/// A module for interacting with the CHOIR API.
+public class CHOIRModule: Module, EnvironmentAccessible {
+    public let choirService: CHOIRService
+    
+    public init(service: CHOIRService) {
+        self.choirService = service
     }
 }
