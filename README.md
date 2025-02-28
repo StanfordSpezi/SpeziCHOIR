@@ -46,7 +46,7 @@ import SpeziCHOIR
 class ExampleAppDelegate: SpeziAppDelegate {
     override var configuration: Configuration {
         Configuration {
-            CHOIRModule()
+            CHOIRModule(service: CHOIRService(serverURL: URL(string: "https://choir.example.com")!))
             // your other modules...
         }
     }
