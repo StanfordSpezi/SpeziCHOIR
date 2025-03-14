@@ -57,6 +57,29 @@ class ExampleAppDelegate: SpeziAppDelegate {
 }
 ```
 
+The [`CHOIRAccountStorageProvider`](https://swiftpackageindex.com/stanfordspezi/spezichoir/documentation/spezichoir/choiraccountstorageprovider) can be added to your App's account configuration like so:
+```swift
+import Spezi
+import SpeziAccount
+import SpeziCHOIR
+import SpeziFirebaseAccount
+
+class ExampleAppDelegate: SpeziAppDelegate {
+    override var configuration: Configuration {
+        Configuration {
+             AccountConfiguration(
+                service: FirebaseAccountService(
+                    providers: [.emailAndPassword]
+                ),
+                storageProvider: CHOIRAccountStorageProvider(siteId: "exampleSite"),
+                configuration: CHOIRService.valueConfiguration
+            )
+            // your other modules...
+        }
+    }
+}
+```
+
 
 ## License
 This project is licensed under the MIT License. See [Licenses](https://github.com/StanfordBDHG/TemplatePackage/tree/main/LICENSES) for more information.

@@ -10,6 +10,7 @@ import Spezi
 import SpeziAccount
 
 
+/// A mock storage provider that can be used for testing purposes.
 public actor TestAccountStorageProvider: AccountStorageProvider {
     @Dependency(AccountDetailsCache.self) private var localCache
 
