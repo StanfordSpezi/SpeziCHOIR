@@ -21,8 +21,7 @@ You need to add the SpeziCHOIR Swift package to
 [your app in Xcode](https://developer.apple.com/documentation/xcode/adding-package-dependencies-to-your-app#) or
 [Swift package](https://developer.apple.com/documentation/xcode/creating-a-standalone-swift-package-with-xcode#Add-a-dependency-on-another-Swift-package).
 
-> [!IMPORTANT]  
-> If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
+> Important: If your application is not yet configured to use Spezi, follow the [Spezi setup article](https://swiftpackageindex.com/stanfordspezi/spezi/documentation/spezi/initial-setup) to set up the core Spezi infrastructure.
 
 ### 2. Add the Module to your App Configuration
 
@@ -41,24 +40,16 @@ class ExampleAppDelegate: SpeziAppDelegate {
 }
 ```
 
-## Types
+## Topics
 
-### Account
+### Account Provider Configuration 
 
 - ``CHOIRAccountStorageProvider``
-
 - ``TestAccountStorageProvider``
 
-### Network
-
-- ``CHOIRModuleProtocol``
+### CHOIR Service Configuration
 
 - ``CHOIRModule``
-
 - ``CHOIRService``
-
 - ``CHOIRMockService``
-
 - ``CHOIRError``
-
-

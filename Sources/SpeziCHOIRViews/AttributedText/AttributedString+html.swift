@@ -14,7 +14,7 @@ import UIKit
 extension AttributedString {
     /// Converts an HTML string into an `AttributedString` with styled content, using dynamic colors and Apple's system fonts.
     @MainActor
-    public static func html(withBody body: String) throws -> AttributedString {
+    static func html(withBody body: String) throws -> AttributedString {
         let bundle = Bundle.main
         let lang = bundle.preferredLocalizations.first
         ?? bundle.developmentLocalization
