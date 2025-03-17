@@ -14,6 +14,7 @@ import OpenAPIURLSession
 import SpeziAccount
 
 
+/// A storage provider that uses the CHOIR API to store and retrieve account details.
 public actor CHOIRAccountStorageProvider: AccountStorageProvider {
     @Application(\.logger) private var logger
     @Dependency(Account.self) private var account
